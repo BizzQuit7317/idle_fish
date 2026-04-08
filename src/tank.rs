@@ -63,8 +63,8 @@ impl Tank {
             max_fish: 10,
             fish: vec![
                 fish::Fish::new(),
-                fish::Fish::new(),
-                fish::Fish::new(),
+                //fish::Fish::new(),
+                //fish::Fish::new(),
             ],
         }
     }
