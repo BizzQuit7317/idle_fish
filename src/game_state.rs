@@ -43,8 +43,13 @@ impl GameState {
 
         //Third pass, calculate each fish's wellness
         for fish in &mut self.tank.fish {
-            fish.wellness = fish.calculate_wellness(&self.tank.water_parameters);
+            //println!("[DBG] Checking wellness calculation");
+            fish.calculate_wellness(&self.tank.water_parameters);
+            fish.status_check();
+            println!("Fish Wellness {}, Fish status {:?}", fish.wellness, fish.status)
         }
+
+        
 
         println!("Tank parameters {:?}\n###################", &self.tank.water_parameters); //only here for debugging to see each tank
     }
