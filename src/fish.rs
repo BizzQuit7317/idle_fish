@@ -46,9 +46,9 @@ impl Tolerances {
     pub fn new() -> Tolerances {
         Tolerances {
             temprature_range: ParameterRange::new(22.0, 27.0),
-            ph_range: ParameterRange::new(22.0, 27.0),
-            gh_range: ParameterRange::new(6.5, 8.0),
-            nitrate_range: ParameterRange::new(5.0, 15.0),
+            ph_range: ParameterRange::new(1.0, 8.0),
+            gh_range: ParameterRange::new(6.5, 12.0),
+            nitrate_range: ParameterRange::new(0.0, 15.0),
             nitrite_range: ParameterRange::new(0.0, 10.0),
             ammonia_range: ParameterRange::new(0.0, 10.0),
         }
@@ -70,7 +70,7 @@ pub enum FishStatus {
     Healthy,
     Neatural,
     Sick,
-    Critical,
+    Dead,
 }
 
 #[derive(Debug)]
@@ -119,17 +119,25 @@ impl Fish {
         the calculation starts at 60.0 points to make thriving a special and healthy hard to get to.
         This should be changeable as needed to otweak the formula
     */
-    pub fn calculate_wellness(&self, water: &tank::WaterParameters) -> f64 {
+    pub fn calculate_wellness(&mut self, water: &tank::WaterParameters) {
         let mut score = 60.0; //Starts the fish at neutral
 
-        score -= self.calculate_parameter_penalty(water.temprature, &self.tolerances.temprature_range);
-        score -= self.calculate_parameter_penalty(water.ph, &self.tolerances.ph_range);
-        score -= self.calculate_parameter_penalty(water.gh, &self.tolerances.gh_range);
-        score -= self.calculate_parameter_penalty(water.nitrate, &self.tolerances.nitrate_range);
-        score -= self.calculate_parameter_penalty(water.nitrite, &self.tolerances.nitrite_range);
-        score -= self.calculate_parameter_penalty(water.ammonia, &self.tolerances.ammonia_range);      
+        println!("[DBG] Initial Score {}", score);
 
-        score
+        score -= self.calculate_parameter_penalty(water.temprature, &self.tolerances.temprature_range);
+        //println!("[DBG] Post temprature Score {}", score);
+        score -= self.calculate_parameter_penalty(water.ph, &self.tolerances.ph_range);
+        //println!("[DBG] Post ph Score {}", score);
+        score -= self.calculate_parameter_penalty(water.gh, &self.tolerances.gh_range);
+        //println!("[DBG] Post gh Score {}", score);
+        score -= self.calculate_parameter_penalty(water.nitrate, &self.tolerances.nitrate_range);
+        //println!("[DBG] Post nitrate Score {}", score);
+        score -= self.calculate_parameter_penalty(water.nitrite, &self.tolerances.nitrite_range);
+        //println!("[DBG] Post nitrite Score {}", score);
+        score -= self.calculate_parameter_penalty(water.ammonia, &self.tolerances.ammonia_range);
+        //println!("[DBG] Post ammonia Score {}", score);    
+
+        self.wellness = score;
     }
 
     pub fn calculate_parameter_penalty(&self, value: f64, range: &ParameterRange) -> f64 {
@@ -141,4 +149,14 @@ impl Fish {
             0.0
         }
     }
+
+    pub fn status_check(&mut self) {
+        self.status = match self.wellness {
+            s if s >= constants::WELLNESS_THRIVING => FishStatus::Thriving,
+            s if s >= constants::WELLNESS_HEALTHY  => FishStatus::Healthy,
+            s if s >= constants::WELLNESS_NEUTRAL  => FishStatus::Neatural, // Fixed spelling from your enum
+            s if s >= constants::WELLNESS_SICK     => FishStatus::Sick,
+            _                                      => FishStatus::Dead,
+        }
+    } 
 }
