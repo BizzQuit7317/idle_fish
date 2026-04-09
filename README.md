@@ -20,5 +20,7 @@ The fish will generate prestige points which can be used to unlock and buy more 
 If you feel like your tank is getting slow or starting to build to much debre you can restart keeping prestige points and getting slow upgrades.
 
 ## To Do
-- Need to update the wellness calculation to take into account groups and other stats
-- Add basic visual
+- Need to create and implement formuals for the following fish stats
+- Hunger (should scale so it goes quicker the lower the number, should also scale with wellness)
+- Age fish should all age slightly differntly (might need another fish marker for age_rate)
+- Wellness calculation should also take into account the other factos like hunger and age instead of just water parameters
