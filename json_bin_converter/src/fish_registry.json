@@ -1,0 +1,46 @@
+{
+  "fish": [
+    {
+      "species": "Goldfish",
+      "max_age_range": { "min": 18, "max": 22 },
+      "min_group": 1,
+      "tier": "Nano",
+      "traits": [
+        { "trait_name": "TempratureBoost", "multiplier": 1.0, "weight": 1.0 }
+      ],
+      "modifiers": [
+        { "parameter": "ammonia", "modifier": 1.0 }
+      ],
+      "base_prestige": 1.0,
+      "tolerances": {
+        "temperature_range": { "min": 10.0, "max": 22.0 },
+        "ph_range": { "min": 6.5, "max": 7.5 },
+        "gh_range": { "min": 6.0, "max": 12.0 },
+        "nitrate_range": { "min": 0.0, "max": 20.0 },
+        "nitrite_range": { "min": 0.0, "max": 0.5 },
+        "ammonia_range": { "min": 0.0, "max": 0.25 }
+      }
+    },
+    {
+      "species": "Guppy",
+      "max_age_range": { "min": 8, "max": 12 },
+      "min_group": 3,
+      "tier": "Nano",
+      "traits": [
+        { "trait_name": "AmmoniaBoost", "multiplier": 1.0, "weight": 1.0 }
+      ],
+      "modifiers": [
+        { "parameter": "ph", "modifier": 0.5 }
+      ],
+      "base_prestige": 0.5,
+      "tolerances": {
+        "temperature_range": { "min": 22.0, "max": 28.0 },
+        "ph_range": { "min": 6.8, "max": 7.8 },
+        "gh_range": { "min": 8.0, "max": 12.0 },
+        "nitrate_range": { "min": 0.0, "max": 15.0 },
+        "nitrite_range": { "min": 0.0, "max": 0.5 },
+        "ammonia_range": { "min": 0.0, "max": 0.25 }
+      }
+    }
+  ]
+}
