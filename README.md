@@ -24,3 +24,10 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 - Hunger (should scale so it goes quicker the lower the number, should also scale with wellness)
 - Age fish should all age slightly differntly (might need another fish marker for age_rate)
 - Wellness calculation should also take into account the other factos like hunger and age instead of just water parameters
+
+- Add save and loading functionality from player
+
+- Add more fish
+
+## General
+The fish data is stred as a binary file to stop player playing around with it, use a converter script to convert a json file that is easy to work with into a bin file you can use
