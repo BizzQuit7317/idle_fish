@@ -1,6 +1,8 @@
 use crate::traits;
 use crate::tank;
 use crate::constants;
+use crate::registry;
+use rand::Rng;
 
 #[derive(Debug)]
 pub struct Moddifier {
@@ -42,6 +44,7 @@ pub struct Tolerances {
     pub ammonia_range: ParameterRange,
 }
 
+/*
 impl Tolerances {
     pub fn new() -> Tolerances {
         Tolerances {
@@ -54,6 +57,7 @@ impl Tolerances {
         }
     }
 }
+    */
 
 #[derive(Debug)]
 pub enum FishTier {
@@ -64,7 +68,20 @@ pub enum FishTier {
     RiverMonster,
 }
 
-#[derive(Debug)]
+impl FishTier {
+    pub fn from_str(s: &str) -> FishTier {
+        match s {
+            "Nano" => FishTier::Nano,
+            "Community" => FishTier::Community,
+            "Tropical" => FishTier::Tropical,
+            "Predator" => FishTier::Predator,
+            "RiverMonster" => FishTier::RiverMonster,
+            _ => FishTier::Nano, // default fallback for now
+        }
+    }
+}
+
+#[derive(Debug, PartialEq, Eq)]
 pub enum FishStatus {
     Thriving,
     Healthy,
@@ -78,6 +95,7 @@ pub struct Fish {
     pub species: String, //Mostly just a display for the users
     pub age: u32,
     pub max_age: u32, //Have this be some random range each fish
+    pub alive: bool, //Keep track of alive or dead fish
     pub min_group: u8,
     pub tier: FishTier,
     pub fish_traits: Vec<traits::Trait>,
@@ -88,28 +106,68 @@ pub struct Fish {
     pub hunger: f64,
     pub status: FishStatus, //calculated based on w wellness score from the tank parameters
     pub wellness: f64, //the int that will drive the status calculation
+
+    pub base_prestige: f64, //how you earn money in the game
 }
 
 impl Fish {
-    pub fn new() -> Fish {
+    pub fn new(species: &registry::FishSpecies) -> Fish {
+        let mut rng = rand::thread_rng();
+        let max_age = rng.gen_range(species.max_age_range.min..=species.max_age_range.max);
+
         Fish {
-            species: String::from("Guppy"),
+            species: species.species.clone(),
             age: 0,
-            max_age: 100, //Have this be some random range each fish
-            min_group: 3,
-            tier: FishTier::Nano,
-            fish_traits: vec![
-                traits::Trait::new(traits::TraitNames::AmmoniaBoost, 1.05, 60.0)
-            ],
+            max_age, //Have this be some random range each fish
+            alive: true, //start on true until either health or age hit max
+            min_group: species.min_group,
+            tier: FishTier::from_str(&species.tier), //keep hardcoded for now convert the enum later
+            fish_traits: species.traits.iter().map(|t| {
+                traits::Trait::new(
+                    traits::TraitNames::from_str(&t.trait_name),
+                    t.multiplier,
+                    t.weight,
+                )
+            }).collect(),
 
-            tolerances: Tolerances::new(),
+            tolerances: Tolerances {
+                temprature_range: ParameterRange::new(
+                    species.tolerances.temperature_range.min,
+                    species.tolerances.temperature_range.max,
+                ),
+                ph_range: ParameterRange::new(
+                    species.tolerances.ph_range.min,
+                    species.tolerances.ph_range.max,
+                ),
+                gh_range: ParameterRange::new(
+                    species.tolerances.gh_range.min,
+                    species.tolerances.gh_range.max,
+                ),
+                nitrate_range: ParameterRange::new(
+                    species.tolerances.nitrate_range.min,
+                    species.tolerances.nitrate_range.max,
+                ),
+                nitrite_range: ParameterRange::new(
+                    species.tolerances.nitrite_range.min,
+                    species.tolerances.nitrate_range.max,
+                ),
+                ammonia_range: ParameterRange::new(
+                    species.tolerances.ammonia_range.min,
+                    species.tolerances.ammonia_range.max,
+                ),
+            },
 
-            moddifiers: vec![
-                Moddifier::new(tank::WaterParameter::ammonia, 0.5),
-            ],
+            moddifiers: species.modifiers.iter().map(|m| {
+                Moddifier::new(
+                    tank::WaterParameter::from_str(&m.parameter),
+                    m.modifier,
+                )
+            }).collect(),
             hunger: 50.0,
             status: FishStatus::Neatural, //calculated based on w wellness score from the tank parameters
             wellness: 60.0, //the int that will drive the status calculation
+
+            base_prestige: species.base_prestige,
         }
     }
 
@@ -158,5 +216,36 @@ impl Fish {
             s if s >= constants::WELLNESS_SICK     => FishStatus::Sick,
             _                                      => FishStatus::Dead,
         }
-    } 
+    }
+
+    pub fn calculate_hunger(&mut self) {
+        /*
+            Need some formula here to decrease hunger by a factor 
+            related to the wellness
+        */
+        self.hunger -= 1.0
+    }
+
+    pub fn increase_age(&mut self) {
+        /*
+            Need to make this a formula aswell to have age scale differently for differnt species
+            do not want age to be a flat rate
+        */
+        self.age += 1
+    }
+
+
+    pub fn alive_check(&mut self) {
+        if self.hunger == 0.0 {
+            self.alive = false
+        }
+
+        if self.age >= self.max_age {
+            self.alive = false
+        }
+
+        if self.status == FishStatus::Dead {
+            self.alive = false
+        }
+    }
 }

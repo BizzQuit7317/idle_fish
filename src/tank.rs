@@ -10,6 +10,20 @@ pub enum WaterParameter {
     ammonia,
 }
 
+impl WaterParameter {
+    pub fn from_str(s: &str) -> WaterParameter {
+        match s {
+            "temperature" => WaterParameter::temprature,
+            "ph" => WaterParameter::ph,
+            "gh" => WaterParameter::gh,
+            "nitrate" => WaterParameter::nitrate,
+            "nitrite" => WaterParameter::nitrite,
+            "ammonia" => WaterParameter::ammonia,
+            _ => panic!("Unknown water parameter: {}", s), // panic here is fine, means your json is wrong
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct WaterParameters {
     pub temprature: f64,
@@ -59,13 +73,17 @@ impl Tank {
         Tank{
             water_parameters: WaterParameters::new(),
 
-            //define fish stats
+            //define fish statsnew
             max_fish: 10,
             fish: vec![
-                fish::Fish::new(),
+                //fish::Fish::new(),
                 //fish::Fish::new(),
                 //fish::Fish::new(),
             ],
         }
+    }
+
+    pub fn check_fish(&mut self) {
+        self.fish.retain(|fish| fish.alive);
     }
 }

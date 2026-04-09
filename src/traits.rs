@@ -22,6 +22,18 @@ impl TraitNames {
             TraitNames::NitriteBoost => tank.water_parameters.nitrite *= multiplier,
         }
     }
+
+    pub fn from_str(s: &str) -> TraitNames {
+        match s {
+            "TempratureBoost" => TraitNames::TempratureBoost,
+            "AmmoniaBoost" => TraitNames::AmmoniaBoost,
+            "PHBoost" => TraitNames::PHBoost,
+            "GHBoost" => TraitNames::GHBoost,
+            "NitrateBoost" => TraitNames::NitrateBoost,
+            "NitriteBoost" => TraitNames::NitriteBoost,
+            _ => panic!("Unknown trait: {}", s),
+        }
+    }
 }
 
 #[derive(Debug)]

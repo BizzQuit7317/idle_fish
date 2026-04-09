@@ -1,16 +1,30 @@
 use crate::tank;
 use crate::traits;
+use crate::player;
+use crate::registry;
+use crate::fish;
 
 #[derive(Debug)]
 pub struct GameState {
     pub tank: tank::Tank,
+    pub player: player::Player,
+    pub fish_registry: registry::FishRegistry,
 }
 
 impl GameState {
     pub fn new() -> GameState {
-        GameState {
+        let mut state = GameState {
             tank: tank::Tank::new(),
+            player: player::Player::new(),
+            fish_registry: registry::FishRegistry::load(),
+        };
+
+        //Need to push the fish registry to the tank so it can add fish
+        if let Some(species) = state.fish_registry.fish.iter().find(|s| s.species == "Goldfish") {
+            state.tank.fish.push(fish::Fish::new(species));
         }
+
+        state
     }
 
     /*
@@ -44,13 +58,30 @@ impl GameState {
         //Third pass, calculate each fish's wellness
         for fish in &mut self.tank.fish {
             //println!("[DBG] Checking wellness calculation");
+            //Do all checks on each fish indivdually
             fish.calculate_wellness(&self.tank.water_parameters);
             fish.status_check();
-            println!("Fish Wellness {}, Fish status {:?}", fish.wellness, fish.status)
+            fish.calculate_hunger();
+            fish.increase_age();
+
+            self.player.current_prestige += fish.base_prestige;
+            self.player.all_time_prestige += fish.base_prestige;
+
+            fish.alive_check(); //check alive state last so they get to live out their last year and player gets points for it
+            println!("[DBG] Fish huger {}, Fish status {:?}, Fish  {}", fish.hunger, fish.status, fish.age)
         }
 
-        
+        //take a snapshoot of list len before removeing fish for tracking fish deaths, MUST ADD FISH BEFORE THIS CHECK
+        let pre_death_fish_len = self.tank.fish.len() as u32;
 
-        println!("Tank parameters {:?}\n###################", &self.tank.water_parameters); //only here for debugging to see each tank
+        //Finally we need to remove any fish that have died in the tank
+        &self.tank.check_fish();
+
+        //check the players total fish here to account for all the removed fish
+        self.player.current_fish_owned = self.tank.fish.len() as u32;
+        self.player.total_fish_died += pre_death_fish_len - self.player.current_fish_owned;
+
+
+        println!("[DBG] Player pretige points {} Tank parameters {:?} the player has {} fish currently and {} dead fish overall\n###################", &self.player.current_prestige, &self.tank.water_parameters, &self.player.current_fish_owned, &self.player.total_fish_died); //only here for debugging to see each tank
     }
 }
