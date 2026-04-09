@@ -29,5 +29,8 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 
 - Add more fish
 
+- Fix UI issues with fish dying all together
+- Fix UI issue with fish not dissappearing after death
+
 ## General
 The fish data is stred as a binary file to stop player playing around with it, use a converter script to convert a json file that is easy to work with into a bin file you can use
