@@ -68,7 +68,7 @@ impl GameState {
             self.player.all_time_prestige += fish.base_prestige;
 
             fish.alive_check(); //check alive state last so they get to live out their last year and player gets points for it
-            println!("[DBG] Fish huger {}, Fish status {:?}, Fish  {}", fish.hunger, fish.status, fish.age)
+            //println!("[DBG] Fish huger {}, Fish status {:?}, Fish  {}", fish.hunger, fish.status, fish.age)
         }
 
         //take a snapshoot of list len before removeing fish for tracking fish deaths, MUST ADD FISH BEFORE THIS CHECK
@@ -82,6 +82,6 @@ impl GameState {
         self.player.total_fish_died += pre_death_fish_len - self.player.current_fish_owned;
 
 
-        println!("[DBG] Player pretige points {} Tank parameters {:?} the player has {} fish currently and {} dead fish overall\n###################", &self.player.current_prestige, &self.tank.water_parameters, &self.player.current_fish_owned, &self.player.total_fish_died); //only here for debugging to see each tank
+        //println!("[DBG] Player pretige points {} Tank parameters {:?} the player has {} fish currently and {} dead fish overall\n###################", &self.player.current_prestige, &self.tank.water_parameters, &self.player.current_fish_owned, &self.player.total_fish_died); //only here for debugging to see each tank
     }
 }

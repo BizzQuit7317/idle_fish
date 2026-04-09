@@ -180,7 +180,7 @@ impl Fish {
     pub fn calculate_wellness(&mut self, water: &tank::WaterParameters) {
         let mut score = 60.0; //Starts the fish at neutral
 
-        println!("[DBG] Initial Score {}", score);
+        //println!("[DBG] Initial Score {}", score);
 
         score -= self.calculate_parameter_penalty(water.temprature, &self.tolerances.temprature_range);
         //println!("[DBG] Post temprature Score {}", score);
