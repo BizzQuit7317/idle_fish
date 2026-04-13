@@ -1,5 +1,4 @@
 use crate::tank::Tank;
-use crate::fish::Fish;
 use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]

@@ -23,7 +23,7 @@ impl TankSprites {
         while self.fish.len() < fish_count {
             let mut rng = ::rand::thread_rng();
             self.fish.push(FishSprite { 
-                x: rng.gen_range(0.0..screen_width()), y: rng.gen_range(0.0..screen_height()), 
+                x: rng.gen_range(screen_width() * 0.25..screen_width() - 20.0), y: rng.gen_range(screen_height() * 0.125..screen_height() * 0.575), 
                 dx: rng.gen_range(-2.0..2.0), dy: rng.gen_range(-2.0..2.0) 
             });
         }
@@ -37,10 +37,10 @@ impl TankSprites {
             sprite.y += sprite.dy;
 
             // bounce off edges
-            if sprite.x <= 0.0 || sprite.x >= screen_width() - 20.0 {
+            if sprite.x <= screen_width() * 0.25 || sprite.x >= screen_width() - 20.0 {
                 sprite.dx *= -1.0;
             }
-            if sprite.y <= 0.0 || sprite.y >= screen_height() - 20.0 {
+            if sprite.y <= screen_height() * 0.125 || sprite.y >= screen_height() * 0.575 {
                 sprite.dy *= -1.0;
             }
         }
@@ -48,7 +48,7 @@ impl TankSprites {
 
     pub fn draw(&self) {
         for sprite in &self.fish {
-            draw_rectangle(sprite.x, sprite.y, 20.0, 10.0, BLUE);
+            draw_rectangle(sprite.x, sprite.y, 20.0, 10.0, Color::from_rgba(255, 140, 0, 255));
         }
     }
 }

@@ -14,6 +14,15 @@ pub fn draw_main_hud(gameState: &game_state::GameState) -> hudAction {
     let sw = screen_width();
     let sh = screen_height();
 
+    //Draw the side stat bar
+    ui::draw_stat(sw * 0.075, sh * 0.1, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank occupancy: {}", gameState.player.current_fish_owned), BLACK);
+    ui::draw_stat(sw * 0.075, sh * 0.20, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Temp: {:.1}°C", gameState.tank.water_parameters.temprature), BLACK);
+    ui::draw_stat(sw * 0.075, sh * 0.25, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank PH: {:.1}pH", gameState.tank.water_parameters.ph), BLACK);
+    ui::draw_stat(sw * 0.075, sh * 0.30, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank GH: {:.1}°dGH", gameState.tank.water_parameters.gh), BLACK);
+    ui::draw_stat(sw * 0.075, sh * 0.35, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Nitrate: {:.1}ppm", gameState.tank.water_parameters.nitrate), BLACK);
+    ui::draw_stat(sw * 0.075, sh * 0.40, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Nitrite: {:.1}ppm", gameState.tank.water_parameters.nitrite), BLACK);
+    ui::draw_stat(sw * 0.075, sh * 0.45, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Ammonia: {:.1}ppm", gameState.tank.water_parameters.ammonia), BLACK);
+
     //Draw the prestige amount
     ui::draw_centered_text_box(sw * 0.5, sh * 0.025 + (sh * con::PRESTIGE_BOX_SCALE_HEIGHT * 0.5), sw * con::PRESTIGE_BOX_SCALE_WIDTH, sh * con::PRESTIGE_BOX_SCALE_HEIGHT, Color::from_rgba(0, 0, 128, 255), &format!("Prestige: {}", gameState.player.current_prestige), WHITE);
 
@@ -27,48 +36,18 @@ pub fn draw_main_hud(gameState: &game_state::GameState) -> hudAction {
         return hudAction::Save;
     }
 
+    //Add Tank Area where fish can swim
+    ui::draw_tank(sw * 0.25, sh * 0.125, sw * con::TANK_WIDTH, sh * con::TANK_HEIGHT);
+
+    //Add bottom areas and tab and stats box
+    draw_rectangle_lines(0.0, sh * 0.6, sw, sh * con::BOTTOM_AREA_HEIGHT, 5.0, con::AREA_BORDER_COLOUR);
+    draw_rectangle_lines(0.0, sh * 0.6, sw, sh * con::BOTTOM_TAB_AREA_HEIGHT, 5.0, con::AREA_BORDER_COLOUR);
+    draw_rectangle_lines(0.0, sh * 0.125, sw * con::STAT_AREA_WIDTH, sh * con::STAT_AREA_HEIGHT, 5.0, con::AREA_BORDER_COLOUR);
+
     //Testing button to add more fish
     if ui::draw_centered_button_box(sw * 0.5, sh * 0.75 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Add Fish", BLACK) {
         return hudAction::AddFish;
     }
-
-    //Draw the side stat bar
-    //Draw tank ooccupancy
-    //draw_text(&format!("Tank occupancy: {}", gameState.player.current_fish_owned), 0.0, sh * 0.2, 30.0, BLACK);
-    ui::draw_stat(sw * 0.075, sh * 0.2, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank occupancy: {}", gameState.player.current_fish_owned), BLACK);
-
-    /*
-    draw_text(&format!("Prestige: {}", gameState.player.current_prestige), 100.0, 100.0, 40.0, WHITE);
-    draw_text(&format!("Fish in tank: {}", gameState.player.current_fish_owned), 100.0, 500.0, 40.0, WHITE);
-
-    // draw the button rectangle
-    draw_rectangle(100.0, 100.0, 200.0, 50.0, GRAY); //vars(x, y, width, height, colour)
-    // draw text on top of it
-    draw_text("Add Fish", 150.0, 132.0, 24.0, BLACK);
-
-    // draw save button
-    draw_rectangle(500.0, 100.0, 200.0, 50.0, GRAY);
-    //add text
-    draw_text("Save", 550.0, 132.0, 24.0, BLACK);
-
-
-
-    // check if add fish was clicked
-    if is_mouse_button_pressed(MouseButton::Left) {
-        let (mx, my) = mouse_position();
-        if mx >= 100.0 && mx <= 300.0 && my >= 100.0 && my <= 150.0 {
-            return hudAction::AddFish;
-        }
-    }
-
-    //check if save was clicked
-    if is_mouse_button_pressed(MouseButton::Left) {
-        let (mx, my) = mouse_position();
-        if mx >= 500.0 && mx <= 700.0 && my >= 100.0 && my <= 150.0 {
-            return hudAction::Save;
-        }
-    }
-    */
     
     hudAction::None
 }

@@ -1,6 +1,5 @@
 // constants.rs
 use macroquad::prelude::*;
-use crate::ui_helper;
 
 //wellness
 pub const WELLNESS_THRIVING: f64 = 80.0;
@@ -25,7 +24,19 @@ pub const SETTING_BUTTON_BOX_SCALE_HEIGHT: f32 = 0.1;
 pub const PRESTIGE_BOX_SCALE_WIDTH: f32 = 0.15;
 pub const PRESTIGE_BOX_SCALE_HEIGHT: f32 = 0.1;
 
-pub const BORDER_COLOUR: Color = WHITE;
+pub const BORDER_COLOUR: Color = BLACK;
 
 pub const STAT_WIDTH: f32 = 0.1;
 pub const STAT_HEIGHT: f32 = 0.1;
+
+pub const TANK_WIDTH: f32 = 0.75;
+pub const TANK_HEIGHT: f32 = 0.475;
+pub const TANK_BORDER_COLOUR: Color = WHITE;
+pub const TANK_COLOUR: Color = Color::from_rgba(15, 94, 156, 255);
+
+pub const AREA_BORDER_COLOUR: Color = BLACK;
+pub const BOTTOM_AREA_HEIGHT: f32 = 0.4;
+pub const BOTTOM_TAB_AREA_HEIGHT: f32 = 0.1;
+
+pub const STAT_AREA_WIDTH: f32 = 0.25;
+pub const STAT_AREA_HEIGHT: f32 = 0.475;

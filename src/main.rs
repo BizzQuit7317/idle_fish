@@ -43,11 +43,15 @@ async fn main() {
                         game_state = Some(game_state::GameState::new());
                         if let Some(gs) = &game_state {
                             file_control::save_game_json(gs);
+                            tank_sprites.sync(gs.tank.fish.len());
                         }
                         current_page = ui_helper::GamePage::Game;
                     },
                     menu::MenuChoice::Continue => {
                         game_state = Some(file_control::load_game_json());
+                        if let Some(gs) = &game_state {
+                            tank_sprites.sync(gs.tank.fish.len());
+                        }
                         current_page = ui_helper::GamePage::Game;
                     },
                     menu::MenuChoice::Settings => {
@@ -68,15 +72,13 @@ async fn main() {
                 }
 
                 clear_background(DARKGREEN);
-                tank_sprites.update();
-                tank_sprites.draw();
-
+                
                 if let Some(gs) = &mut game_state {
                     match hud::draw_main_hud(gs) {
                         hud::hudAction::AddFish => {
                             if let Some(species) = gs.fish_registry.fish.iter().find(|s| s.species == "Goldfish") {
                                 gs.tank.fish.push(fish::Fish::new(species));
-                                tank_sprites.sync(gs.tank.fish.len());
+                                //tank_sprites.sync(gs.tank.fish.len());
                             }
                         },
                         hud::hudAction::Save => {
@@ -87,9 +89,14 @@ async fn main() {
                         },
                         hud::hudAction::None => {}
                     }
+
+                    tank_sprites.sync(gs.tank.fish.len());
                 }
-                debug::draw_debug_zones();
-                debug::draw_debug_grid();
+
+                tank_sprites.update();
+                tank_sprites.draw();
+                //debug::draw_debug_zones();
+                //debug::draw_debug_grid();
             },
             ui_helper::GamePage::Settings => {
                 clear_background(BLUE);
@@ -103,7 +110,7 @@ async fn main() {
                     settings::settingChoice::None => {},
                 }
 
-                debug::draw_debug_grid();
+                //debug::draw_debug_grid();
             }
         }
 

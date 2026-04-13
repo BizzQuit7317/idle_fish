@@ -45,21 +45,6 @@ pub struct Tolerances {
     pub ammonia_range: ParameterRange,
 }
 
-/*
-impl Tolerances {
-    pub fn new() -> Tolerances {
-        Tolerances {
-            temprature_range: ParameterRange::new(22.0, 27.0),
-            ph_range: ParameterRange::new(1.0, 8.0),
-            gh_range: ParameterRange::new(6.5, 12.0),
-            nitrate_range: ParameterRange::new(0.0, 15.0),
-            nitrite_range: ParameterRange::new(0.0, 10.0),
-            ammonia_range: ParameterRange::new(0.0, 10.0),
-        }
-    }
-}
-    */
-
 #[derive(Debug, Serialize, Deserialize)]
 pub enum FishTier {
     Nano,
@@ -150,7 +135,7 @@ impl Fish {
                 ),
                 nitrite_range: ParameterRange::new(
                     species.tolerances.nitrite_range.min,
-                    species.tolerances.nitrate_range.max,
+                    species.tolerances.nitrite_range.max,
                 ),
                 ammonia_range: ParameterRange::new(
                     species.tolerances.ammonia_range.min,
@@ -237,7 +222,7 @@ impl Fish {
 
 
     pub fn alive_check(&mut self) {
-        if self.hunger == 0.0 {
+        if self.hunger <= 0.0 {
             self.alive = false
         }
 

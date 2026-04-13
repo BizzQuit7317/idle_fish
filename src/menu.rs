@@ -2,10 +2,6 @@ use macroquad::prelude::*;
 
 use crate::constants as con;
 use crate::ui_helper as ui;
-use crate::hud;
-
-
-use crate::debug;
 
 pub enum MenuChoice {
     NewGame,
@@ -39,7 +35,7 @@ pub fn draw_main_menu() -> MenuChoice {
         return MenuChoice::Settings;
     }
 
-    debug::draw_debug_grid(); //adds the grid and right click function for creating and makeing more areas also in main.rs
+    //debug::draw_debug_grid(); //adds the grid and right click function for creating and makeing more areas also in main.rs
 
     MenuChoice::None
 }

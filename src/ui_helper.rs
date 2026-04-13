@@ -23,6 +23,11 @@ pub fn draw_centered_text_box(cx: f32, cy: f32, w: f32, h: f32, box_color: Color
     draw_text(text, text_x, text_y, font_size, text_color);
 }
 
+pub fn draw_tank(x: f32, y: f32, w: f32, h: f32) {
+    draw_rectangle(x, y, w, h, con::TANK_COLOUR);
+    draw_rectangle_lines(x, y, w, h, 5.0, con::TANK_BORDER_COLOUR);
+}
+
 pub fn draw_text_box(x: f32, y: f32, w: f32, h: f32, box_color: Color, text: &str, text_color: Color) {
     draw_rectangle(x, y, w, h, box_color);
     draw_rectangle_lines(x, y, w, h, 2.0, con::BORDER_COLOUR);
