@@ -1,7 +1,8 @@
 use crate::tank::Tank;
 use crate::fish::Fish;
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum TraitNames {
     TempratureBoost,
     AmmoniaBoost,
@@ -36,7 +37,7 @@ impl TraitNames {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Trait {
     pub trait_name: TraitNames,
     pub multiplier: f64,

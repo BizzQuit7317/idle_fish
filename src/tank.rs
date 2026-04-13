@@ -1,6 +1,8 @@
+use serde::{Serialize, Deserialize}; 
+
 use crate::fish;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum WaterParameter {
     temprature,
     ph,
@@ -24,7 +26,7 @@ impl WaterParameter {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct WaterParameters {
     pub temprature: f64,
     pub ph: f64,
@@ -58,7 +60,7 @@ impl WaterParameters {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Tank {
     //define the water parameterss
     pub water_parameters: WaterParameters,

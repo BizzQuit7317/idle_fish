@@ -1,8 +1,16 @@
 use macroquad::prelude::*;
 
+use crate::constants as con;
+use crate::ui_helper as ui;
+use crate::hud;
+
+
+use crate::debug;
+
 pub enum MenuChoice {
     NewGame,
     Continue,
+    Settings,
     None,
 }
 
@@ -14,35 +22,24 @@ pub fn draw_main_menu() -> MenuChoice {
     clear_background(Color::from_rgba(0, 128, 128, 255)); // classic win98 teal
 
     // Title box
-    draw_rectangle(sw / 2.0 - 150.0, 80.0, 300.0, 60.0, Color::from_rgba(0, 0, 128, 255));
-    draw_rectangle_lines(sw / 2.0 - 150.0, 80.0, 300.0, 60.0, 2.0, WHITE);
-    draw_text("IDLE FISH", sw / 2.0 - 70.0, 120.0, 40.0, WHITE);
+    ui::draw_centered_text_box(sw * 0.5, sh * 0.2, sw * con::TITLE_BOX_SCALE_WIDTH, sh * con::TITLE_BOX_SCALE_HEIGHT, Color::from_rgba(0, 0, 128, 255), "IDLE FISH", WHITE);
 
     // New Game button
-    let ng_x = sw / 2.0 - 100.0;
-    let ng_y = sh / 2.0 - 60.0;
-    draw_rectangle(ng_x, ng_y, 200.0, 40.0, Color::from_rgba(192, 192, 192, 255));
-    draw_rectangle_lines(ng_x, ng_y, 200.0, 40.0, 2.0, WHITE);
-    draw_text("New Game", ng_x + 45.0, ng_y + 26.0, 24.0, BLACK);
+    if ui::draw_centered_button_box(sw * 0.5, sh * 0.35, sw * con::BUTTON_BOX_SCALE_WIDTH, sh * con::BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "New Game", BLACK) {
+        return MenuChoice::NewGame;
+    }
 
     // Continue button
-    let c_x = sw / 2.0 - 100.0;
-    let c_y = sh / 2.0 + 20.0;
-    draw_rectangle(c_x, c_y, 200.0, 40.0, Color::from_rgba(192, 192, 192, 255));
-    draw_rectangle_lines(c_x, c_y, 200.0, 40.0, 2.0, WHITE);
-    draw_text("Continue", c_x + 50.0, c_y + 26.0, 24.0, BLACK);
-
-    // Mouse click detection
-    if is_mouse_button_pressed(MouseButton::Left) {
-        let (mx, my) = mouse_position();
-
-        if mx >= ng_x && mx <= ng_x + 200.0 && my >= ng_y && my <= ng_y + 40.0 {
-            return MenuChoice::NewGame;
-        }
-        if mx >= c_x && mx <= c_x + 200.0 && my >= c_y && my <= c_y + 40.0 {
-            return MenuChoice::Continue;
-        }
+    if ui::draw_centered_button_box(sw * 0.5, sh * 0.5, sw * con::BUTTON_BOX_SCALE_WIDTH, sh * con::BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Continue", BLACK) {
+        return MenuChoice::Continue;
     }
+
+    //Draw the settings button
+    if ui::draw_button_box(sw * 0.975 - (sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH), sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Settings", BLACK) {
+        return MenuChoice::Settings;
+    }
+
+    debug::draw_debug_grid(); //adds the grid and right click function for creating and makeing more areas also in main.rs
 
     MenuChoice::None
 }

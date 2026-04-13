@@ -11,15 +11,10 @@ mod sprites;
 mod file_control;
 mod debug;
 mod ui_helper;
+mod settings;
 
 use macroquad::prelude::*;
 //use crate::sprites;
-
-pub enum GamePage {
-    MainMenu,
-    Game,
-    Options,
-}
 
 //#[macroquad::main("Idle Fish")]
 fn window_conf() -> Conf {
@@ -34,61 +29,82 @@ fn window_conf() -> Conf {
 
 #[macroquad::main(window_conf)]
 async fn main() {
-    let mut game_state: Option<game_state::GameState> = None;
-    let mut tank_sprites = sprites::TankSprites::new();
-    let mut in_menu = true;
-    let mut tick_timer = 0.0f32;
+    let mut game_state: Option<game_state::GameState> = None; //initiate the game
+    let mut tank_sprites = sprites::TankSprites::new(); //allow the fishes to roam freely and beautifully
+    let mut current_page = ui_helper::GamePage::MainMenu;
+    let mut last_page = ui_helper::GamePage::MainMenu;
+    let mut tick_timer = 0.0f32; //control the frame speed
 
     loop {
-        if in_menu {
-            match menu::draw_main_menu() {
-                menu::MenuChoice::NewGame => {
-                    game_state = Some(game_state::GameState::new());
-                    if let Some(gs) = &game_state {
-                        file_control::save_game_json(gs); //reset or create a new file in the saves
-                    } 
-                    in_menu = false;  
-                },
-                menu::MenuChoice::Continue => {
-                    // load from save later, for now same as new game
-                    game_state = Some(file_control::load_game_json());
-                    in_menu = false;
-                },
-                menu::MenuChoice::None => {}
-            }
-        } else {
-            tick_timer += get_frame_time();
-            if tick_timer >= 1.0 {
-                if let Some(gs) = &mut game_state {
-                    gs.tick();
-                }
-                tick_timer = 0.0;
-            }
-
-            //Drawing
-            clear_background(DARKGREEN);
-
-            tank_sprites.update();
-            tank_sprites.draw();
-
-            if let Some(gs) = &mut game_state {
-                match hud::draw_main_hud(gs) {
-                    hud::hudAction::AddFish => {
-                        if let Some(species) = gs.fish_registry.fish.iter().find(|s| s.species == "Goldfish") {
-                            gs.tank.fish.push(fish::Fish::new(species));
-                            tank_sprites.sync(gs.tank.fish.len()); // sync after tick so count is accurate
-                            
+        match current_page {
+            ui_helper::GamePage::MainMenu => {
+                match menu::draw_main_menu() {
+                    menu::MenuChoice::NewGame => {
+                        game_state = Some(game_state::GameState::new());
+                        if let Some(gs) = &game_state {
+                            file_control::save_game_json(gs);
                         }
+                        current_page = ui_helper::GamePage::Game;
                     },
-                    hud::hudAction::Save => {
-                        file_control::save_game_json(gs);
+                    menu::MenuChoice::Continue => {
+                        game_state = Some(file_control::load_game_json());
+                        current_page = ui_helper::GamePage::Game;
                     },
-                    hud::hudAction::None => {}
+                    menu::MenuChoice::Settings => {
+                            current_page = ui_helper::GamePage::Settings;
+                        },
+                    menu::MenuChoice::None => {}
                 }
-            }
+            },
+            ui_helper::GamePage::Game => {
+                last_page = ui_helper::GamePage::Game;
 
-            debug::draw_debug_grid(); //adds the grid and right click function for creating and makeing more areas also in main menu.rs
-  
+                tick_timer += get_frame_time();
+                if tick_timer >= 1.0 {
+                    if let Some(gs) = &mut game_state {
+                        gs.tick();
+                    }
+                    tick_timer = 0.0;
+                }
+
+                clear_background(DARKGREEN);
+                tank_sprites.update();
+                tank_sprites.draw();
+
+                if let Some(gs) = &mut game_state {
+                    match hud::draw_main_hud(gs) {
+                        hud::hudAction::AddFish => {
+                            if let Some(species) = gs.fish_registry.fish.iter().find(|s| s.species == "Goldfish") {
+                                gs.tank.fish.push(fish::Fish::new(species));
+                                tank_sprites.sync(gs.tank.fish.len());
+                            }
+                        },
+                        hud::hudAction::Save => {
+                            file_control::save_game_json(gs);
+                        },
+                        hud::hudAction::Settings => {
+                            current_page = ui_helper::GamePage::Settings;
+                        },
+                        hud::hudAction::None => {}
+                    }
+                }
+                debug::draw_debug_zones();
+                debug::draw_debug_grid();
+            },
+            ui_helper::GamePage::Settings => {
+                clear_background(BLUE);
+                match settings::draw_settings_menu(&last_page) {
+                    settings::settingChoice::MainMenu => {
+                        current_page = ui_helper::GamePage::MainMenu;
+                    },
+                    settings::settingChoice::GameMenu => {
+                        current_page = ui_helper::GamePage::Game;
+                    },
+                    settings::settingChoice::None => {},
+                }
+
+                debug::draw_debug_grid();
+            }
         }
 
         next_frame().await;

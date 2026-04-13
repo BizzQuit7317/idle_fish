@@ -3,8 +3,11 @@ use crate::traits;
 use crate::player;
 use crate::registry;
 use crate::fish;
+use crate::file_control;
 
-#[derive(Debug)]
+use serde::{Serialize, Deserialize};
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct GameState {
     pub tank: tank::Tank,
     pub player: player::Player,
@@ -80,8 +83,7 @@ impl GameState {
         //check the players total fish here to account for all the removed fish
         self.player.current_fish_owned = self.tank.fish.len() as u32;
         self.player.total_fish_died += pre_death_fish_len - self.player.current_fish_owned;
-
-
+        
         //println!("[DBG] Player pretige points {} Tank parameters {:?} the player has {} fish currently and {} dead fish overall\n###################", &self.player.current_prestige, &self.tank.water_parameters, &self.player.current_fish_owned, &self.player.total_fish_died); //only here for debugging to see each tank
     }
 }

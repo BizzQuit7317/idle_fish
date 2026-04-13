@@ -1,6 +1,7 @@
 use std::time::{SystemTime, UNIX_EPOCH};
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Player {
     pub current_prestige: f64,
     pub all_time_prestige: f64,

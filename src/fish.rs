@@ -3,8 +3,9 @@ use crate::tank;
 use crate::constants;
 use crate::registry;
 use rand::Rng;
+use serde::{Serialize, Deserialize};
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Moddifier {
     pub parameter: tank::WaterParameter,
     pub moddifier: f64, //this number will usually be reduced as a cost of keeping the fish
@@ -19,7 +20,7 @@ impl Moddifier {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct ParameterRange {
     pub min: f64,
     pub max: f64,
@@ -34,7 +35,7 @@ impl ParameterRange {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Tolerances {
     pub temprature_range: ParameterRange,
     pub ph_range: ParameterRange,
@@ -59,7 +60,7 @@ impl Tolerances {
 }
     */
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum FishTier {
     Nano,
     Community,
@@ -81,7 +82,7 @@ impl FishTier {
     }
 }
 
-#[derive(Debug, PartialEq, Eq)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum FishStatus {
     Thriving,
     Healthy,
@@ -90,7 +91,7 @@ pub enum FishStatus {
     Dead,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Fish {
     pub species: String, //Mostly just a display for the users
     pub age: u32,
