@@ -56,6 +56,11 @@ pub fn draw_main_hud(gameState: &game_state::GameState) -> hudAction {
     if ui::draw_button_box(sw * 0.75, sh * 0.75 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Feed Fish", BLACK) {
         return hudAction::FeedFish;
     }
+
+    //Dispplay the notification pop up
+    if gameState.notification.is_active() {
+        ui::draw_centered_text_box(sw * 0.5, sh * 0.55, sw * 0.3, sh * 0.05, Color::from_rgba(0, 0, 0, 180), &gameState.notification.message, WHITE);
+    }
     
     hudAction::None
 }

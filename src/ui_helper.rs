@@ -1,4 +1,5 @@
 use macroquad::prelude::*;
+use serde::{Serialize, Deserialize};
 
 use crate::constants as con;
 
@@ -6,6 +7,36 @@ pub enum GamePage {
     MainMenu,
     Game,
     Settings,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Notification {
+    pub message: String,
+    pub timer: f32,
+}
+
+impl Notification {
+    pub fn new() -> Notification {
+        Notification {
+            message: String::new(),
+            timer: 0.0,
+        }
+    }
+
+    pub fn set(&mut self, message: &str, duration: f32) {
+        self.message = message.to_string();
+        self.timer = duration;
+    }
+
+    pub fn tick(&mut self, delta: f32) {
+        if self.timer > 0.0 {
+            self.timer -= delta;
+        }
+    }
+
+    pub fn is_active(&self) -> bool {
+        self.timer > 0.0
+    }
 }
 
 pub fn draw_centered_text_box(cx: f32, cy: f32, w: f32, h: f32, box_color: Color, text: &str, text_color: Color) {

@@ -13,8 +13,10 @@ mod debug;
 mod ui_helper;
 mod settings;
 mod economy;
+mod offline_report;
 
 use macroquad::prelude::*;
+use std::time::{SystemTime, UNIX_EPOCH};
 //use crate::sprites;
 
 //#[macroquad::main("Idle Fish")]
@@ -50,7 +52,21 @@ async fn main() {
                     },
                     menu::MenuChoice::Continue => {
                         game_state = Some(file_control::load_game_json());
-                        if let Some(gs) = &game_state {
+                        if let Some(gs) = &mut game_state {
+                            let now = SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards...").as_secs();
+
+                            let offline_seconds = now.saturating_sub(gs.player.last_save_time);
+                            let mut offline_prestige = gs.player.current_prestige;
+                            for _ in 0..offline_seconds {
+                                gs.tick();
+                            }
+                            offline_prestige = gs.player.current_prestige - offline_prestige;
+
+                            gs.offline_report.seconds_passed = offline_seconds as u32;
+                            gs.offline_report.prestige_gained = offline_prestige;
+
+                            println!("[DBG]Offline report:  Time away {} seconds, {} Prestige gained", gs.offline_report.seconds_passed, gs.offline_report.prestige_gained);
+
                             tank_sprites.sync(gs.tank.fish.len());
                         }
                         current_page = ui_helper::GamePage::Game;
@@ -71,6 +87,9 @@ async fn main() {
                     }
                     tick_timer = 0.0;
                 }
+                if let Some(gs) = &mut game_state {
+                    gs.notification.tick(get_frame_time());
+                }
 
                 clear_background(DARKGREEN);
                 
@@ -87,9 +106,10 @@ async fn main() {
                                     gs.player.current_prestige -= gs.economy.get_cost(species);
                                     gs.tank.fish.push(fish::Fish::new(species));
                                     gs.economy.record_purchase(species);
-
+                                    gs.notification.set("Fish Purchased!", 3.0);
                                     println!("could afford fish bought!");
                                 } else {
+                                    gs.notification.set("your a peasant who can't buy a goldfish. Begone naeve", 3.0);
                                     println!("your a peasant who can't buy a goldfish, begone naeve")
                                 }
                                 
@@ -99,6 +119,7 @@ async fn main() {
                         },
                         hud::hudAction::Save => {
                             file_control::save_game_json(gs);
+                            gs.player.last_save_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards...").as_secs();
                         },
                         hud::hudAction::Settings => {
                             current_page = ui_helper::GamePage::Settings;

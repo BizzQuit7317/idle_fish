@@ -4,6 +4,8 @@ use crate::player;
 use crate::registry;
 use crate::fish;
 use crate::economy;
+use crate::ui_helper;
+use crate::offline_report;
 
 use serde::{Serialize, Deserialize};
 
@@ -12,6 +14,8 @@ pub struct GameState {
     pub tank: tank::Tank,
     pub player: player::Player,
     pub economy: economy::Economy,
+    pub notification: ui_helper::Notification,
+    pub offline_report: offline_report::OfflineReport,
     pub fish_registry: registry::FishRegistry,
 }
 
@@ -21,6 +25,8 @@ impl GameState {
             tank: tank::Tank::new(),
             player: player::Player::new(),
             economy: economy::Economy::new(),
+            notification: ui_helper::Notification::new(),
+            offline_report: offline_report::OfflineReport::new(),
             fish_registry: registry::FishRegistry::load(),
         };
 
