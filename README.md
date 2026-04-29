@@ -24,6 +24,9 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 - Hunger (should scale so it goes quicker the lower the number, should also scale with wellness)
 - Age fish should all age slightly differntly (might need another fish marker for age_rate)
 - Wellness calculation should also take into account the other factos like hunger and age instead of just water parameters
+- Add food differnt foods
+- Add differnt hunger increae for each foodd
+- Add animation for food dropping
 
 - Add save and loading functionality from player
 
