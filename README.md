@@ -28,8 +28,7 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 - Add differnt hunger increae for each foodd
 - Add animation for food dropping
 - Prettify the notification pop up
-
-- Add save and loading functionality from player
+- Add offline time limit for player
 
 - Add more fish
 
