@@ -1,0 +1,32 @@
+use std::collections::HashMap;
+use serde::{Serialize, Deserialize}; 
+
+use crate::registry;
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Economy {
+    pub purchase_counts: HashMap<String, u32>,
+}
+
+impl Economy {
+    pub fn new() -> Economy{
+        Economy {
+            purchase_counts: HashMap::new(),
+        }
+    }
+
+    pub fn record_purchase(&mut self, species: &registry::FishSpecies) {
+        let count = self.purchase_counts.entry(species.species.clone()).or_insert(0);
+        *count += 1;
+    }
+
+    pub fn get_cost(&self, species: &registry::FishSpecies) -> f64 {
+        let count = self.purchase_counts.get(&species.species).copied().unwrap_or(0);
+        // each purchase increases cost by 1% compounding
+        species.base_cost * (2.25_f64.powi(count as i32))
+    }
+
+    pub fn can_afford(&self, player_prestige: f64, species: &registry::FishSpecies) -> bool {
+        player_prestige >= self.get_cost(species)
+    }
+}

@@ -12,6 +12,7 @@ mod file_control;
 mod debug;
 mod ui_helper;
 mod settings;
+mod economy;
 
 use macroquad::prelude::*;
 //use crate::sprites;
@@ -75,9 +76,24 @@ async fn main() {
                 
                 if let Some(gs) = &mut game_state {
                     match hud::draw_main_hud(gs) {
+                        hud::hudAction::FeedFish => {
+                            for fish in &mut gs.tank.fish {
+                                fish.eat();
+                            }
+                        },
                         hud::hudAction::AddFish => {
                             if let Some(species) = gs.fish_registry.fish.iter().find(|s| s.species == "Goldfish") {
-                                gs.tank.fish.push(fish::Fish::new(species));
+                                if gs.economy.can_afford(gs.player.current_prestige, species) {
+                                    gs.player.current_prestige -= gs.economy.get_cost(species);
+                                    gs.tank.fish.push(fish::Fish::new(species));
+                                    gs.economy.record_purchase(species);
+
+                                    println!("could afford fish bought!");
+                                } else {
+                                    println!("your a peasant who can't buy a goldfish, begone naeve")
+                                }
+                                
+                                println!("[DBG] purchase count: {:?}", gs.economy.purchase_counts);
                                 //tank_sprites.sync(gs.tank.fish.len());
                             }
                         },

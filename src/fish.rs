@@ -94,6 +94,7 @@ pub struct Fish {
     pub wellness: f64, //the int that will drive the status calculation
 
     pub base_prestige: f64, //how you earn money in the game
+    pub base_cost: f64,
 }
 
 impl Fish {
@@ -154,6 +155,9 @@ impl Fish {
             wellness: 60.0, //the int that will drive the status calculation
 
             base_prestige: species.base_prestige,
+
+            base_cost: species.base_cost,
+            
         }
     }
 
@@ -210,6 +214,14 @@ impl Fish {
             related to the wellness
         */
         self.hunger -= 1.0
+    }
+
+    pub fn eat(&mut self) {
+        /*
+            Need to alter this per fish so its not a flat value
+        */
+
+        self.hunger += 2.0
     }
 
     pub fn increase_age(&mut self) {

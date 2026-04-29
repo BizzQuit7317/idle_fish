@@ -3,6 +3,7 @@ use crate::traits;
 use crate::player;
 use crate::registry;
 use crate::fish;
+use crate::economy;
 
 use serde::{Serialize, Deserialize};
 
@@ -10,6 +11,7 @@ use serde::{Serialize, Deserialize};
 pub struct GameState {
     pub tank: tank::Tank,
     pub player: player::Player,
+    pub economy: economy::Economy,
     pub fish_registry: registry::FishRegistry,
 }
 
@@ -18,6 +20,7 @@ impl GameState {
         let mut state = GameState {
             tank: tank::Tank::new(),
             player: player::Player::new(),
+            economy: economy::Economy::new(),
             fish_registry: registry::FishRegistry::load(),
         };
 
@@ -70,7 +73,7 @@ impl GameState {
             self.player.all_time_prestige += fish.base_prestige;
 
             fish.alive_check(); //check alive state last so they get to live out their last year and player gets points for it
-            //println!("[DBG] Fish huger {}, Fish status {:?}, Fish Age {}\n~~~~~~~~~~~~~~~~~~~~~~~~~", fish.hunger, fish.status, fish.age);
+            //println!("[DBG] Fish huger {}\n~~~~~~~~~~~~~~~~~~~~~~~~~", fish.hunger);
         }
         //println!("###########################################");
 

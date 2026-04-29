@@ -44,6 +44,7 @@ pub struct FishSpecies {
     pub traits: Vec<SpeciesTrait>,
     pub modifiers: Vec<Modifier>,
     pub base_prestige: f64,
+    pub base_cost: f64,
     pub tolerances: SpeciesTolerance,
 }
 
