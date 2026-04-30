@@ -39,3 +39,29 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 
 ## General
 The fish data is stred as a binary file to stop player playing around with it, use a converter script to convert a json file that is easy to work with into a bin file you can use
+
+
+## Fish json struct for converting
+```
+{
+      "species": "",
+      "max_age_range": { "min": , "max":  },
+      "min_group": ,
+      "tier": "",
+      "traits": [
+        { "trait_name": "", "multiplier": , "weight":  }
+      ],
+      "modifiers": [
+        { "parameter": "", "modifier":  }
+      ],
+      "base_prestige": ,
+      "base_cost": ,
+      "tolerances": {
+        "temperature_range": { "min": , "max":  },
+        "ph_range": { "min": , "max":  },
+        "gh_range": { "min": , "max":  },
+        "nitrate_range": { "min": , "max":  },
+        "nitrite_range": { "min": , "max":  },
+        "ammonia_range": { "min": , "max":  }
+}
+```
