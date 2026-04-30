@@ -44,8 +44,8 @@ The fish data is stred as a binary file to stop player playing around with it, u
 ## Fish json struct for converting
 ```
 {
-      "species": "",
-      "max_age_range": { "min": , "max":  },
+      "species": "", 
+      "max_age_range": { "min": , "max":  }, //IN game ticks of life, around 1 second per tick
       "min_group": ,
       "tier": "",
       "traits": [
