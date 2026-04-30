@@ -8,10 +8,18 @@ pub enum hudAction {
     AddFish,
     Save,
     Settings,
+    FishStats,
+    Testing,
     None,
 }
 
-pub fn draw_main_hud(gameState: &game_state::GameState) -> hudAction {
+#[derive(PartialEq)]
+pub enum BottomTab {
+    FishStats,
+    Testing, // Add/Feed fish and other testing features
+}
+
+pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) -> hudAction {
     let sw = screen_width();
     let sh = screen_height();
 
@@ -37,6 +45,11 @@ pub fn draw_main_hud(gameState: &game_state::GameState) -> hudAction {
         return hudAction::Save;
     }
 
+    //Feed Button always available to player
+    if ui::draw_button_box(sw * 0.75, sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Feed Fish", BLACK) {
+        return hudAction::FeedFish;
+    }
+
     //Add Tank Area where fish can swim
     ui::draw_tank(sw * 0.25, sh * 0.125, sw * con::TANK_WIDTH, sh * con::TANK_HEIGHT);
 
@@ -45,18 +58,55 @@ pub fn draw_main_hud(gameState: &game_state::GameState) -> hudAction {
     draw_rectangle_lines(0.0, sh * 0.6, sw, sh * con::BOTTOM_TAB_AREA_HEIGHT, 5.0, con::AREA_BORDER_COLOUR);
     draw_rectangle_lines(0.0, sh * 0.125, sw * con::STAT_AREA_WIDTH, sh * con::STAT_AREA_HEIGHT, 5.0, con::AREA_BORDER_COLOUR);
 
-    //Testing button to add more fish, uses the cot of teh first fish in index
-    if ui::draw_button_box(sw * 0.5, sh * 0.75 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Add Fish", BLACK) {
-        return hudAction::AddFish;
-    }
-    //Draw text box for price underneath
-    ui::draw_stat(sw * 0.5, sh * 0.82 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Cost: {:.2} prestige", gameState.economy.get_cost(&gameState.fish_registry.fish[0])), BLACK);
-
-    //Testing a feed button
-    if ui::draw_button_box(sw * 0.75, sh * 0.75 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Feed Fish", BLACK) {
-        return hudAction::FeedFish;
+    //Add Tab button here, each tab shoul step up 0.125 on the x-axis per tab, change later for better looks
+    //Draw FishStats button, furthest to the left
+    if ui::draw_button_box(sw * 0.025, sh * 0.6 , sw * con::TAB_BUTTON_BOX_SCALE_WIDTH, sh * con::TAB_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "FishStats", BLACK) {
+        return hudAction::FishStats;
     }
 
+    //Draw the Testing Tab
+    if ui::draw_button_box(sw * 0.15, sh * 0.6 , sw * con::TAB_BUTTON_BOX_SCALE_WIDTH, sh * con::TAB_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Testing", BLACK) {
+        return hudAction::Testing;
+    }
+
+    match active_tab {
+        &BottomTab::FishStats => {
+            //Need to loop through all the fish and print out their stats
+            let mut init_x = 0.0;
+            let mut init_y = sh * 0.7;
+            let stat_width = sw / gameState.tank.fish.len() as f32;
+            let stat_height = (sh * con::FISH_STAT_AREA_HEIGHT) / 7.0; //7 i the number of stats to display
+
+            for fish in  &gameState.tank.fish {
+                //Draw borders
+                draw_rectangle_lines(init_x, init_y, stat_width, sh * con::FISH_STAT_AREA_HEIGHT, 5.0, con::AREA_BORDER_COLOUR);
+
+                //Draw stats, things in () are max ranges
+                ui::draw_stat(init_x, init_y, stat_width, stat_height, &format!("Species {}", fish.species), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.04, stat_width, stat_height, &format!("Age {} ({})", fish.age, fish.max_age), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.08, stat_width, stat_height, &format!("Hunger {}", fish.hunger), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.12, stat_width, stat_height, &format!("Status {:?}", fish.status), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.16, stat_width, stat_height, &format!("PPS {}", fish.base_prestige), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.20, stat_width, stat_height, &format!("Traits Coming Soon"), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.24, stat_width, stat_height, &format!("Mods Coming Soon"), BLACK);
+
+                //println!("[DBG]Species {}\nAge {}\nHunger {}\nStatus {:?}\nPPS {} \nTraits coming soon\nModdifiers coming soon", fish.species, fish.age, fish.hunger, fish.status, fish.base_prestige);
+
+                init_x += stat_width; //Needs to move 1 box along
+            }
+
+        },
+        &BottomTab::Testing => {
+            //Testing button to add more fish, uses the cot of teh first fish in index
+            if ui::draw_button_box(sw * 0.5, sh * 0.75 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Add Fish", BLACK) {
+                return hudAction::AddFish;
+            }
+            //Draw text box for price underneath
+            ui::draw_stat(sw * 0.5, sh * 0.82 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Cost: {:.2} prestige", gameState.economy.get_cost(&gameState.fish_registry.fish[0])), BLACK);
+
+        },
+    }
+    
     //Dispplay the notification pop up
     if gameState.notification.is_active() {
         ui::draw_centered_text_box(sw * 0.5, sh * 0.55, sw * 0.3, sh * 0.05, Color::from_rgba(0, 0, 0, 180), &gameState.notification.message, WHITE);

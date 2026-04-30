@@ -37,6 +37,7 @@ async fn main() {
     let mut current_page = ui_helper::GamePage::MainMenu;
     let mut last_page = ui_helper::GamePage::MainMenu;
     let mut tick_timer = 0.0f32; //control the frame speed
+    let mut current_tab = &hud::BottomTab::FishStats; //set FishStats as the dedfault tab for now
 
     loop {
         match current_page {
@@ -65,7 +66,8 @@ async fn main() {
                             gs.offline_report.seconds_passed = offline_seconds as u32;
                             gs.offline_report.prestige_gained = offline_prestige;
 
-                            println!("[DBG]Offline report:  Time away {} seconds, {} Prestige gained", gs.offline_report.seconds_passed, gs.offline_report.prestige_gained);
+                            gs.notification.set(&format!("Offline report:  Time away {} seconds, {} Prestige gained", gs.offline_report.seconds_passed, gs.offline_report.prestige_gained), 5.0);
+                            //println!("[DBG]Offline report:  Time away {} seconds, {} Prestige gained", gs.offline_report.seconds_passed, gs.offline_report.prestige_gained);
 
                             tank_sprites.sync(gs.tank.fish.len());
                         }
@@ -94,7 +96,7 @@ async fn main() {
                 clear_background(DARKGREEN);
                 
                 if let Some(gs) = &mut game_state {
-                    match hud::draw_main_hud(gs) {
+                    match hud::draw_main_hud(gs, current_tab) {
                         hud::hudAction::FeedFish => {
                             for fish in &mut gs.tank.fish {
                                 fish.eat();
@@ -102,18 +104,22 @@ async fn main() {
                         },
                         hud::hudAction::AddFish => {
                             if let Some(species) = gs.fish_registry.fish.iter().find(|s| s.species == "Goldfish") {
-                                if gs.economy.can_afford(gs.player.current_prestige, species) {
-                                    gs.player.current_prestige -= gs.economy.get_cost(species);
-                                    gs.tank.fish.push(fish::Fish::new(species));
-                                    gs.economy.record_purchase(species);
-                                    gs.notification.set("Fish Purchased!", 3.0);
-                                    println!("could afford fish bought!");
+                                if gs.tank.fish.len() < gs.tank.max_fish as usize {
+                                    if gs.economy.can_afford(gs.player.current_prestige, species) {
+                                        gs.player.current_prestige -= gs.economy.get_cost(species);
+                                        gs.tank.fish.push(fish::Fish::new(species));
+                                        gs.economy.record_purchase(species);
+                                        gs.notification.set("Fish Purchased!", 3.0);
+                                        //println!("could afford fish bought!");
+                                    } else {
+                                        gs.notification.set("your a peasant who can't buy a goldfish. Begone naeve", 3.0);
+                                        //println!("your a peasant who can't buy a goldfish, begone naeve")
+                                    }
                                 } else {
-                                    gs.notification.set("your a peasant who can't buy a goldfish. Begone naeve", 3.0);
-                                    println!("your a peasant who can't buy a goldfish, begone naeve")
+                                    gs.notification.set("your tank is already at capacity greedy guts!", 3.0);
                                 }
                                 
-                                println!("[DBG] purchase count: {:?}", gs.economy.purchase_counts);
+                                //println!("[DBG] purchase count: {:?}", gs.economy.purchase_counts);
                                 //tank_sprites.sync(gs.tank.fish.len());
                             }
                         },
@@ -123,6 +129,12 @@ async fn main() {
                         },
                         hud::hudAction::Settings => {
                             current_page = ui_helper::GamePage::Settings;
+                        },
+                        hud::hudAction::FishStats => {
+                            current_tab = &hud::BottomTab::FishStats;
+                        },
+                        hud::hudAction::Testing => {
+                            current_tab = &hud::BottomTab::Testing;
                         },
                         hud::hudAction::None => {}
                     }

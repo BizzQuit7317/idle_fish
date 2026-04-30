@@ -38,24 +38,27 @@ pub struct WaterParameters {
 
 impl WaterParameters {
     pub fn new() -> WaterParameters {
+        /*
+            Should be set to RO water by default on a new instance
+        */
         WaterParameters {
             temprature: 25.0,
-            ph: 7.0,
-            gh: 10.0,
+            ph: 6.5,
+            gh: 0.0,
             nitrate: 0.0,
             nitrite: 0.0,
-            ammonia: 10.0,
+            ammonia: 0.0,
         }
     }
 
     pub fn apply_changes(&mut self, parameter: &WaterParameter, value: f64) {
         match parameter {
             WaterParameter::temprature => self.temprature -= value,
-            WaterParameter::ph => self.ph -= value,
-            WaterParameter::gh => self.gh -= value,
-            WaterParameter::nitrate => self.nitrate -= value,
-            WaterParameter::nitrite => self.nitrite -= value,
-            WaterParameter::ammonia => self.ammonia -= value,
+            WaterParameter::ph => self.ph += value,
+            WaterParameter::gh => self.gh += value,
+            WaterParameter::nitrate => self.nitrate += value,
+            WaterParameter::nitrite => self.nitrite += value,
+            WaterParameter::ammonia => self.ammonia += value,
         }
     }
 }
@@ -76,7 +79,7 @@ impl Tank {
             water_parameters: WaterParameters::new(),
 
             //define fish statsnew
-            max_fish: 10,
+            max_fish: 3,
             fish: vec![
                 //fish::Fish::new(),
                 //fish::Fish::new(),

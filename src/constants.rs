@@ -21,6 +21,9 @@ pub const BUTTON_BOX_SCALE_HEIGHT: f32 = 0.1;
 pub const SETTING_BUTTON_BOX_SCALE_WIDTH: f32 = 0.1;
 pub const SETTING_BUTTON_BOX_SCALE_HEIGHT: f32 = 0.1;
 
+pub const TAB_BUTTON_BOX_SCALE_WIDTH: f32 = 0.1;
+pub const TAB_BUTTON_BOX_SCALE_HEIGHT: f32 = 0.1;
+
 pub const PRESTIGE_BOX_SCALE_WIDTH: f32 = 0.15;
 pub const PRESTIGE_BOX_SCALE_HEIGHT: f32 = 0.1;
 
@@ -40,3 +43,6 @@ pub const BOTTOM_TAB_AREA_HEIGHT: f32 = 0.1;
 
 pub const STAT_AREA_WIDTH: f32 = 0.25;
 pub const STAT_AREA_HEIGHT: f32 = 0.475;
+
+pub const FISH_STAT_AREA_WIDTH: f32 = 0.3;
+pub const FISH_STAT_AREA_HEIGHT: f32 = 0.35;
