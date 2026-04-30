@@ -33,6 +33,8 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 - Make ffline report a poppup intead of cmd dbg
 - Add more fish
 
+## Bugs
+- When you click a tab all elements loaded after it flash for some reason
 
 ## General
 The fish data is stred as a binary file to stop player playing around with it, use a converter script to convert a json file that is easy to work with into a bin file you can use
