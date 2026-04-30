@@ -1,6 +1,7 @@
 use serde::{Serialize, Deserialize}; 
 
 use crate::fish;
+use crate::traits;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum WaterParameter {
@@ -98,11 +99,26 @@ impl Tank {
     }
 
     pub fn check_fish(&mut self) -> bool {
-    let before = self.fish.len();
-    self.fish.retain(|fish| fish.alive);
-    self.fish.len() != before  // returns true if anything was removed
-}
+        let before = self.fish.len();
+        self.fish.retain(|fish| fish.alive);
+        self.fish.len() != before  // returns true if anything was removed
+    }
 
+    pub fn apply_traits(&mut self) {
+        for fish in &self.fish {
+            for fish_trait in &fish.fish_traits {
+                match fish_trait.trait_name {
+                    traits::TraitNames::TempratureBoost => self.water_parameters.temprature *= fish_trait.multiplier,
+                    traits::TraitNames::AmmoniaBoost => self.water_parameters.ammonia *= fish_trait.multiplier,
+                    traits::TraitNames::PHBoost => self.water_parameters.ph *= fish_trait.multiplier,
+                    traits::TraitNames::GHBoost => self.water_parameters.gh *= fish_trait.multiplier,
+                    traits::TraitNames::NitrateBoost => self.water_parameters.nitrate *= fish_trait.multiplier,
+                    traits::TraitNames::NitriteBoost => self.water_parameters.nitrite *= fish_trait.multiplier,
+                }
+            }
+        }
+    }
+    
     pub fn update_ideal_parameters(&mut self) {
         if self.fish.is_empty() {
             self.ideal_parameters.temprature_range = fish::ParameterRange::new(0.0, 40.0);
@@ -170,7 +186,6 @@ impl Tank {
             self.ideal_parameters.ammonia_range.min = new_min_ammonia;
             self.ideal_parameters.ammonia_range.max = new_max_ammonia;
         }
-
         
     }
 }

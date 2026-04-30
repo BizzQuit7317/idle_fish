@@ -46,6 +46,7 @@ async fn main() {
                     menu::MenuChoice::NewGame => {
                         game_state = Some(game_state::GameState::new());
                         if let Some(gs) = &mut game_state {
+                            gs.tank.apply_traits();
                             gs.tank.update_ideal_parameters();
                             file_control::save_game_json(gs);
                             tank_sprites.sync(gs.tank.fish.len());
@@ -114,6 +115,7 @@ async fn main() {
                                         gs.tank.fish.push(fish::Fish::new(species));
                                         gs.economy.record_purchase(species);
                                         gs.notification.set("Fish Purchased!", 3.0);
+                                        gs.tank.apply_traits(); //Update once fish is added
                                         gs.tank.update_ideal_parameters(); // Update after adding
                                         //println!("could afford fish bought!");
                                     } else {

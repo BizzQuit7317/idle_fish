@@ -52,20 +52,6 @@ impl GameState {
             }
         }
 
-        //Second pass, needs to new apply the traits to the water
-        for fish in &self.tank.fish {
-            for fish_trait in &fish.fish_traits {
-                match fish_trait.trait_name {
-                    traits::TraitNames::TempratureBoost => self.tank.water_parameters.temprature *= fish_trait.multiplier,
-                    traits::TraitNames::AmmoniaBoost => self.tank.water_parameters.ammonia *= fish_trait.multiplier,
-                    traits::TraitNames::PHBoost => self.tank.water_parameters.ph *= fish_trait.multiplier,
-                    traits::TraitNames::GHBoost => self.tank.water_parameters.gh *= fish_trait.multiplier,
-                    traits::TraitNames::NitrateBoost => self.tank.water_parameters.nitrate *= fish_trait.multiplier,
-                    traits::TraitNames::NitriteBoost => self.tank.water_parameters.nitrite *= fish_trait.multiplier,
-                }
-            }
-        }
-
         //Third pass, calculate each fish's wellness
         for fish in &mut self.tank.fish {
             //println!("[DBG] Checking wellness calculation");
@@ -80,6 +66,19 @@ impl GameState {
 
             fish.alive_check(); //check alive state last so they get to live out their last year and player gets points for it
             //println!("[DBG] Fish huger {}\n~~~~~~~~~~~~~~~~~~~~~~~~~", fish.hunger);
+            //Remove the traits of dead fish on the tank
+            if !fish.alive {
+                for fish_trait in &fish.fish_traits {
+                    match fish_trait.trait_name {
+                        traits::TraitNames::TempratureBoost => self.tank.water_parameters.temprature /= fish_trait.multiplier,
+                        traits::TraitNames::AmmoniaBoost => self.tank.water_parameters.ammonia /= fish_trait.multiplier,
+                        traits::TraitNames::PHBoost => self.tank.water_parameters.ph /= fish_trait.multiplier,
+                        traits::TraitNames::GHBoost => self.tank.water_parameters.gh /= fish_trait.multiplier,
+                        traits::TraitNames::NitrateBoost => self.tank.water_parameters.nitrate /= fish_trait.multiplier,
+                        traits::TraitNames::NitriteBoost => self.tank.water_parameters.nitrite /= fish_trait.multiplier,
+                    }
+                }
+            }
         }
         //println!("###########################################");
 
