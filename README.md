@@ -29,7 +29,8 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 - Add animation for food dropping
 - Prettify the notification pop up
 - Add offline time limit for player
-- Add more detail to offline report
+- Add more detail to offline report#
+- Make ffline report a poppup intead of cmd dbg
 - Add more fish
 
 
