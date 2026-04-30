@@ -19,18 +19,54 @@ pub enum BottomTab {
     Testing, // Add/Feed fish and other testing features
 }
 
+fn parameter_colour(value: f64, min: f64, max: f64) -> Color {
+    //Alter at somepoint to accoount for 0.00 being ideal
+    let margin = (max - min) * 0.1;
+    if value < min || value > max {
+        RED
+    } else if value < min + margin || value > max - margin {
+        ORANGE
+    } else {
+        GREEN
+    }
+}
+
 pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) -> hudAction {
     let sw = screen_width();
     let sh = screen_height();
 
     //Draw the side stat bar
     ui::draw_stat(sw * 0.075, sh * 0.1, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank occupancy: {}", gameState.player.current_fish_owned), BLACK);
-    ui::draw_stat(sw * 0.075, sh * 0.20, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Temp: {:.1}°C", gameState.tank.water_parameters.temprature), BLACK);
-    ui::draw_stat(sw * 0.075, sh * 0.25, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank PH: {:.1}pH", gameState.tank.water_parameters.ph), BLACK);
-    ui::draw_stat(sw * 0.075, sh * 0.30, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank GH: {:.1}°dGH", gameState.tank.water_parameters.gh), BLACK);
-    ui::draw_stat(sw * 0.075, sh * 0.35, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Nitrate: {:.1}ppm", gameState.tank.water_parameters.nitrate), BLACK);
-    ui::draw_stat(sw * 0.075, sh * 0.40, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Nitrite: {:.1}ppm", gameState.tank.water_parameters.nitrite), BLACK);
-    ui::draw_stat(sw * 0.075, sh * 0.45, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Ammonia: {:.1}ppm", gameState.tank.water_parameters.ammonia), BLACK);
+    ui::draw_stat(sw * 0.075, sh * 0.20, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Temp: {:.1}°C", gameState.tank.water_parameters.temprature), parameter_colour(
+        gameState.tank.water_parameters.temprature,
+        gameState.tank.ideal_parameters.temprature_range.min,
+        gameState.tank.ideal_parameters.temprature_range.max,
+    ));
+    ui::draw_stat(sw * 0.075, sh * 0.25, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank PH: {:.1}pH", gameState.tank.water_parameters.ph), parameter_colour(
+        gameState.tank.water_parameters.ph,
+        gameState.tank.ideal_parameters.ph_range.min,
+        gameState.tank.ideal_parameters.ph_range.max,
+    ));
+    ui::draw_stat(sw * 0.075, sh * 0.30, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank GH: {:.1}°dGH", gameState.tank.water_parameters.gh), parameter_colour(
+        gameState.tank.water_parameters.gh,
+        gameState.tank.ideal_parameters.gh_range.min,
+        gameState.tank.ideal_parameters.gh_range.max,
+    ));
+    ui::draw_stat(sw * 0.075, sh * 0.35, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Nitrate: {:.1}ppm", gameState.tank.water_parameters.nitrate), parameter_colour(
+        gameState.tank.water_parameters.nitrate,
+        gameState.tank.ideal_parameters.nitrate_range.min,
+        gameState.tank.ideal_parameters.nitrate_range.max,
+    ));
+    ui::draw_stat(sw * 0.075, sh * 0.40, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Nitrite: {:.1}ppm", gameState.tank.water_parameters.nitrite), parameter_colour(
+        gameState.tank.water_parameters.nitrite,
+        gameState.tank.ideal_parameters.nitrite_range.min,
+        gameState.tank.ideal_parameters.nitrite_range.max,
+    ));
+    ui::draw_stat(sw * 0.075, sh * 0.45, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Ammonia: {:.1}ppm", gameState.tank.water_parameters.ammonia), parameter_colour(
+        gameState.tank.water_parameters.ammonia,
+        gameState.tank.ideal_parameters.ammonia_range.min,
+        gameState.tank.ideal_parameters.ammonia_range.max,
+    ));
 
     //Draw the prestige amount
     ui::draw_centered_text_box(sw * 0.5, sh * 0.025 + (sh * con::PRESTIGE_BOX_SCALE_HEIGHT * 0.5), sw * con::PRESTIGE_BOX_SCALE_WIDTH, sh * con::PRESTIGE_BOX_SCALE_HEIGHT, Color::from_rgba(0, 0, 128, 255), &format!("Prestige: {:.2}", gameState.player.current_prestige), WHITE);
@@ -43,11 +79,6 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
     //Draw the save button
     if ui::draw_button_box(sw * 0.025, sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Save", BLACK) {
         return hudAction::Save;
-    }
-
-    //Feed Button always available to player
-    if ui::draw_button_box(sw * 0.75, sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Feed Fish", BLACK) {
-        return hudAction::FeedFish;
     }
 
     //Add Tank Area where fish can swim
@@ -87,11 +118,11 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
                 ui::draw_stat(init_x, init_y + sh * 0.08, stat_width, stat_height, &format!("Hunger {}", fish.hunger), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.12, stat_width, stat_height, &format!("Status {:?}", fish.status), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.16, stat_width, stat_height, &format!("PPS {}", fish.base_prestige), BLACK);
-                ui::draw_stat(init_x, init_y + sh * 0.20, stat_width, stat_height, &format!("Traits Coming Soon"), BLACK);
-                ui::draw_stat(init_x, init_y + sh * 0.24, stat_width, stat_height, &format!("Mods Coming Soon"), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.20, stat_width, stat_height, &format!("Traits {:.5?}", fish.fish_traits[0]), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.24, stat_width, stat_height, &format!("Mods {:.5?}", fish.moddifiers[0]), BLACK);
 
                 //println!("[DBG]Species {}\nAge {}\nHunger {}\nStatus {:?}\nPPS {} \nTraits coming soon\nModdifiers coming soon", fish.species, fish.age, fish.hunger, fish.status, fish.base_prestige);
-
+                
                 init_x += stat_width; //Needs to move 1 box along
             }
 
@@ -105,6 +136,11 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
             ui::draw_stat(sw * 0.5, sh * 0.82 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Cost: {:.2} prestige", gameState.economy.get_cost(&gameState.fish_registry.fish[0])), BLACK);
 
         },
+    }
+
+    //Feed Button always available to player, moved lower to stop flashing
+    if ui::draw_button_box(sw * 0.75, sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Feed Fish", BLACK) {
+        return hudAction::FeedFish;
     }
     
     //Dispplay the notification pop up

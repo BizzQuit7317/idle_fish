@@ -87,7 +87,9 @@ impl GameState {
         let pre_death_fish_len = self.tank.fish.len() as u32;
 
         //Finally we need to remove any fish that have died in the tank
-        self.tank.check_fish();
+        if self.tank.check_fish() {
+            self.tank.update_ideal_parameters();
+        }
 
         //check the players total fish here to account for all the removed fish
         self.player.current_fish_owned = self.tank.fish.len() as u32;

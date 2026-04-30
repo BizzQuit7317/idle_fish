@@ -45,7 +45,8 @@ async fn main() {
                 match menu::draw_main_menu() {
                     menu::MenuChoice::NewGame => {
                         game_state = Some(game_state::GameState::new());
-                        if let Some(gs) = &game_state {
+                        if let Some(gs) = &mut game_state {
+                            gs.tank.update_ideal_parameters();
                             file_control::save_game_json(gs);
                             tank_sprites.sync(gs.tank.fish.len());
                         }
@@ -65,6 +66,9 @@ async fn main() {
 
                             gs.offline_report.seconds_passed = offline_seconds as u32;
                             gs.offline_report.prestige_gained = offline_prestige;
+
+                            //Update the tanks ideal parameters before starting the game to account for any changes like dead fish
+                            gs.tank.update_ideal_parameters();
 
                             gs.notification.set(&format!("Offline report:  Time away {} seconds, {} Prestige gained", gs.offline_report.seconds_passed, gs.offline_report.prestige_gained), 5.0);
                             //println!("[DBG]Offline report:  Time away {} seconds, {} Prestige gained", gs.offline_report.seconds_passed, gs.offline_report.prestige_gained);
@@ -110,6 +114,7 @@ async fn main() {
                                         gs.tank.fish.push(fish::Fish::new(species));
                                         gs.economy.record_purchase(species);
                                         gs.notification.set("Fish Purchased!", 3.0);
+                                        gs.tank.update_ideal_parameters(); // Update after adding
                                         //println!("could afford fish bought!");
                                     } else {
                                         gs.notification.set("your a peasant who can't buy a goldfish. Begone naeve", 3.0);
