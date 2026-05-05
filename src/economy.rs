@@ -2,6 +2,7 @@ use std::collections::HashMap;
 use serde::{Serialize, Deserialize}; 
 
 use crate::registry;
+use crate::constants;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Economy {
@@ -28,5 +29,9 @@ impl Economy {
 
     pub fn can_afford(&self, player_prestige: f64, species: &registry::FishSpecies) -> bool {
         player_prestige >= self.get_cost(species)
+    }
+
+    pub fn get_food_cost(&self, player_food_level: f64) -> f64 {
+        constants::BASE_FOOD_PRICE * player_food_level.powf(2.0)
     }
 }

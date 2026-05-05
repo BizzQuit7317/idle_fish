@@ -104,11 +104,11 @@ async fn main() {
                     match hud::draw_main_hud(gs, current_tab) {
                         hud::hudAction::FeedFish => {
                             for fish in &mut gs.tank.fish {
-                                fish.eat();
+                                fish.eat(gs.player.current_food_level);
                             }
                         },
-                        hud::hudAction::AddFish => {
-                            if let Some(species) = gs.fish_registry.fish.iter().find(|s| s.species == "Goldfish") {
+                        hud::hudAction::AddFish(index) => {
+                            if let Some(species) = gs.fish_registry.fish.get(index) {
                                 if gs.tank.fish.len() < gs.tank.max_fish as usize {
                                     if gs.economy.can_afford(gs.player.current_prestige, species) {
                                         gs.player.current_prestige -= gs.economy.get_cost(species);
@@ -130,6 +130,15 @@ async fn main() {
                                 //tank_sprites.sync(gs.tank.fish.len());
                             }
                         },
+                        hud::hudAction::BuyFood => {
+                            gs.player.current_food_level += 1.0;
+                            if gs.player.current_food_level > gs.player.highest_food_level {
+                                gs.player.highest_food_level = gs.player.current_food_level; //update the highesst food level reached
+                            }
+                        }
+                        hud::hudAction::AddPrestige => {
+                            gs.player.current_prestige += 1000.0;
+                        },
                         hud::hudAction::Save => {
                             file_control::save_game_json(gs);
                             gs.player.last_save_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards...").as_secs();
@@ -139,6 +148,9 @@ async fn main() {
                         },
                         hud::hudAction::FishStats => {
                             current_tab = &hud::BottomTab::FishStats;
+                        },
+                        hud::hudAction::Store => {
+                            current_tab = &hud::BottomTab::Store;
                         },
                         hud::hudAction::Testing => {
                             current_tab = &hud::BottomTab::Testing;

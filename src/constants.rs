@@ -8,6 +8,16 @@ pub const WELLNESS_NEUTRAL: f64 = 40.0;
 pub const WELLNESS_SICK: f64 = 20.0;
 pub const WELLNESS_PENALTY_SEVERITY: f64 = 2.0; // main tuning knob
 
+//tier base hunger drains
+pub const HUNGER_DRAIN_NANO:          f64 = 0.1;  // ~10 ticks to lose 1 point
+pub const HUNGER_DRAIN_COMMUNITY:     f64 = 0.2;
+pub const HUNGER_DRAIN_TROPICAL:      f64 = 0.3;
+pub const HUNGER_DRAIN_PREDATOR:      f64 = 0.5;
+pub const HUNGER_DRAIN_RIVER_MONSTER: f64 = 0.8;
+
+//Base costs
+pub const BASE_FOOD_PRICE: f64 = 1000.0;
+pub const BASE_FOOD_RESTORE: f64 = 1.0;
 //UI scale
 pub const WINDOWS_DEFAULT_WIDTH: i32 = 1280;
 pub const WINDOWS_DEFAULT_LENGTH: i32 = 720;

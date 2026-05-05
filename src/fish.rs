@@ -168,35 +168,32 @@ impl Fish {
         This should be changeable as needed to otweak the formula
     */
     pub fn calculate_wellness(&mut self, water: &tank::WaterParameters) {
-        let mut score = 60.0; //Starts the fish at neutral
+    let temp_score    = self.parameter_score(water.temprature, &self.tolerances.temprature_range);
+    let ph_score      = self.parameter_score(water.ph,         &self.tolerances.ph_range);
+    let gh_score      = self.parameter_score(water.gh,         &self.tolerances.gh_range);
+    let nitrate_score = self.parameter_score(water.nitrate,    &self.tolerances.nitrate_range);
+    let nitrite_score = self.parameter_score(water.nitrite,    &self.tolerances.nitrite_range);
+    let ammonia_score = self.parameter_score(water.ammonia,    &self.tolerances.ammonia_range);
 
-        //println!("[DBG] Initial Score {}", score);
+    let average_param_score = ( temp_score +  ph_score + gh_score + nitrate_score + nitrite_score + ammonia_score ) / 6.0;//6 is just the number of parameters
 
-        score -= self.calculate_parameter_penalty(water.temprature, &self.tolerances.temprature_range);
-        //println!("[DBG] Post temprature Score {}", score);
-        score -= self.calculate_parameter_penalty(water.ph, &self.tolerances.ph_range);
-        //println!("[DBG] Post ph Score {}", score);
-        score -= self.calculate_parameter_penalty(water.gh, &self.tolerances.gh_range);
-        //println!("[DBG] Post gh Score {}", score);
-        score -= self.calculate_parameter_penalty(water.nitrate, &self.tolerances.nitrate_range);
-        //println!("[DBG] Post nitrate Score {}", score);
-        score -= self.calculate_parameter_penalty(water.nitrite, &self.tolerances.nitrite_range);
-        //println!("[DBG] Post nitrite Score {}", score);
-        score -= self.calculate_parameter_penalty(water.ammonia, &self.tolerances.ammonia_range);
-        //println!("[DBG] Post ammonia Score {}", score);    
+    //println!("[DBG]scores temp_score{} ph_score{} gh_score{} nitrate_score{} nitrite_score{} ammonia_score{} average_param_score{}", temp_score, ph_score, gh_score, nitrate_score, nitrite_score, ammonia_score, average_param_score);
 
-        self.wellness = score;
+    self.wellness = average_param_score; // Need to also mdify by hunger so wellness drops at low hunger
+}
+
+pub fn parameter_score(&self, parameter_value: f64, range: &ParameterRange) -> f64 {
+    let mid_point      = (range.min + range.max) / 2.0;
+    let half_range_size = (range.max - range.min) / 2.0;
+
+    let deviation = (parameter_value - mid_point).abs() / half_range_size;
+
+    if deviation <= 1.0 {
+        60.0 - (deviation * 20.0)
+    } else {
+        (40.0 - ((deviation - 1.0) * 40.0)).max(0.0)
     }
-
-    pub fn calculate_parameter_penalty(&self, value: f64, range: &ParameterRange) -> f64 {
-        if value < range.min {
-            (range.min - value) * constants::WELLNESS_PENALTY_SEVERITY
-        } else if value > range.max {
-            (value - range.max) * constants::WELLNESS_PENALTY_SEVERITY
-        } else {
-            0.0
-        }
-    }
+}
 
     pub fn status_check(&mut self) {
         self.status = match self.wellness {
@@ -209,27 +206,24 @@ impl Fish {
     }
 
     pub fn calculate_hunger(&mut self) {
-        /*
-            Need some formula here to decrease hunger by a factor 
-            related to the wellness
-        */
-        self.hunger -= 1.0
+        let drain = match self.tier {
+            FishTier::Nano         => constants::HUNGER_DRAIN_NANO,
+            FishTier::Community    => constants::HUNGER_DRAIN_COMMUNITY,
+            FishTier::Tropical     => constants::HUNGER_DRAIN_TROPICAL,
+            FishTier::Predator     => constants::HUNGER_DRAIN_PREDATOR,
+            FishTier::RiverMonster => constants::HUNGER_DRAIN_RIVER_MONSTER,
+        };
+
+        self.hunger = (self.hunger - drain).max(0.0); // clamp at 0, never go negative
     }
 
-    pub fn eat(&mut self) {
-        /*
-            Need to alter this per fish so its not a flat value
-        */
-
-        self.hunger += 2.0
+    pub fn eat(&mut self, food_level: f64) {
+        let restore = constants::BASE_FOOD_RESTORE * food_level.powf(1.5);
+        self.hunger = (self.hunger + restore);
     }
 
     pub fn increase_age(&mut self) {
-        /*
-            Need to make this a formula aswell to have age scale differently for differnt species
-            do not want age to be a flat rate
-        */
-        self.age += 1
+        self.age += 1 //Just needs to increase per tick controlled by max age range
     }
 
 

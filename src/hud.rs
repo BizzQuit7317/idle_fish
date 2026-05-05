@@ -5,17 +5,21 @@ use crate::constants as con;
 
 pub enum hudAction {
     FeedFish,
-    AddFish,
+    AddFish(usize),
     Save,
     Settings,
     FishStats,
+    Store,
     Testing,
+    AddPrestige,
+    BuyFood,
     None,
 }
 
 #[derive(PartialEq)]
 pub enum BottomTab {
     FishStats,
+    Store,
     Testing, // Add/Feed fish and other testing features
 }
 
@@ -95,8 +99,13 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
         return hudAction::FishStats;
     }
 
+    //Draw the store tab
+    if ui::draw_button_box(sw * 0.15, sh * 0.6 , sw * con::TAB_BUTTON_BOX_SCALE_WIDTH, sh * con::TAB_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Store", BLACK) {
+        return hudAction::Store;
+    }
+
     //Draw the Testing Tab
-    if ui::draw_button_box(sw * 0.15, sh * 0.6 , sw * con::TAB_BUTTON_BOX_SCALE_WIDTH, sh * con::TAB_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Testing", BLACK) {
+    if ui::draw_button_box(sw * 0.275, sh * 0.6 , sw * con::TAB_BUTTON_BOX_SCALE_WIDTH, sh * con::TAB_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Testing", BLACK) {
         return hudAction::Testing;
     }
 
@@ -115,7 +124,7 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
                 //Draw stats, things in () are max ranges
                 ui::draw_stat(init_x, init_y, stat_width, stat_height, &format!("Species {}", fish.species), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.04, stat_width, stat_height, &format!("Age {} ({})", fish.age, fish.max_age), BLACK);
-                ui::draw_stat(init_x, init_y + sh * 0.08, stat_width, stat_height, &format!("Hunger {}", fish.hunger), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.08, stat_width, stat_height, &format!("Hunger {:.2}", fish.hunger), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.12, stat_width, stat_height, &format!("Status {:?}", fish.status), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.16, stat_width, stat_height, &format!("PPS {}", fish.base_prestige), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.20, stat_width, stat_height, &format!("Traits {:.5?}", fish.fish_traits[0]), BLACK);
@@ -127,14 +136,36 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
             }
 
         },
+        &BottomTab::Store => {
+            //Draw text info
+            ui::draw_stat(sw * 0.15, sh * 0.7 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "GoldFish", BLACK);
+            //Testing button to add prestige to buy things
+            if ui::draw_button_box(sw * 0.15, sh * 0.8 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("{:.2}", gameState.economy.get_cost(&gameState.fish_registry.fish[0])), BLACK) {
+                return hudAction::AddFish(0);
+            }
+            
+            //Food upgrades
+            ui::draw_stat(sw * 0.45, sh * 0.7 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Upgrade Food", BLACK);
+            //Testing button to add prestige to buy things
+            if ui::draw_button_box(sw * 0.45, sh * 0.8 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("{:.2}", gameState.economy.get_food_cost(gameState.player.current_food_level)), BLACK) {
+                return hudAction::BuyFood;
+            }
+            
+        }
         &BottomTab::Testing => {
             //Testing button to add more fish, uses the cot of teh first fish in index
             if ui::draw_button_box(sw * 0.5, sh * 0.75 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Add Fish", BLACK) {
-                return hudAction::AddFish;
+                return hudAction::AddFish(0);
             }
             //Draw text box for price underneath
             ui::draw_stat(sw * 0.5, sh * 0.82 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Cost: {:.2} prestige", gameState.economy.get_cost(&gameState.fish_registry.fish[0])), BLACK);
 
+            //Testing button to add prestige to buy things
+            if ui::draw_button_box(sw * 0.15, sh * 0.75 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Add Prestige", BLACK) {
+                return hudAction::AddPrestige;
+            }
+            //Draw text info
+            ui::draw_stat(sw * 0.15, sh * 0.82 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Have 1000 prestige.", BLACK);
         },
     }
 

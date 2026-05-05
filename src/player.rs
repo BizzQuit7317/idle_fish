@@ -6,6 +6,9 @@ pub struct Player {
     pub current_prestige: f64,
     pub all_time_prestige: f64,
 
+    pub current_food_level: f64,
+    pub highest_food_level: f64,
+
     pub current_fish_owned: u32,
     pub total_fish_died: u32,
     pub peak_fish_count: u8,
@@ -24,6 +27,9 @@ impl Player {
         Player {
             current_prestige: 0.0,
             all_time_prestige: 0.0,
+
+            current_food_level: 1.0, //Always resets to 1.0 on rebirth
+            highest_food_level: 1.0,
 
             current_fish_owned: 0,
             total_fish_died: 0,

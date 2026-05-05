@@ -43,9 +43,9 @@ impl WaterParameters {
             Should be set to RO water by default on a new instance
         */
         WaterParameters {
-            temprature: 25.0,
+            temprature: 20.0,
             ph: 6.5,
-            gh: 0.0,
+            gh: 7.0,
             nitrate: 0.0,
             nitrite: 0.0,
             ammonia: 0.0,
