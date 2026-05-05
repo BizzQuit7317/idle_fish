@@ -16,8 +16,11 @@ pub const HUNGER_DRAIN_PREDATOR:      f64 = 0.5;
 pub const HUNGER_DRAIN_RIVER_MONSTER: f64 = 0.8;
 
 //Base costs
-pub const BASE_FOOD_PRICE: f64 = 1000.0;
+pub const BASE_FOOD_PRICE: f64 = 100.0;
 pub const BASE_FOOD_RESTORE: f64 = 1.0;
+
+pub const BASE_TANK_CAP_PRICE: f64 = 250.0;
+
 //UI scale
 pub const WINDOWS_DEFAULT_WIDTH: i32 = 1280;
 pub const WINDOWS_DEFAULT_LENGTH: i32 = 720;

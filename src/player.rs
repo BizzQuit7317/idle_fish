@@ -9,6 +9,9 @@ pub struct Player {
     pub current_food_level: f64,
     pub highest_food_level: f64,
 
+    pub tank_cap_level: f64,
+    pub highest_tank_cap_level: f64,
+
     pub current_fish_owned: u32,
     pub total_fish_died: u32,
     pub peak_fish_count: u8,
@@ -30,6 +33,9 @@ impl Player {
 
             current_food_level: 1.0, //Always resets to 1.0 on rebirth
             highest_food_level: 1.0,
+
+            tank_cap_level: 1.0,
+            highest_tank_cap_level: 1.0,
 
             current_fish_owned: 0,
             total_fish_died: 0,

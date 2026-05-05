@@ -6,6 +6,7 @@ use crate::constants as con;
 pub enum hudAction {
     FeedFish,
     AddFish(usize),
+    TestAddFish(usize),
     Save,
     Settings,
     FishStats,
@@ -13,6 +14,7 @@ pub enum hudAction {
     Testing,
     AddPrestige,
     BuyFood,
+    BuyTankCap,
     DebugIndexIncrease,
     DebugIndexDecrease,
     None,
@@ -42,7 +44,7 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
     let sh = screen_height();
 
     //Draw the side stat bar
-    ui::draw_stat(sw * 0.075, sh * 0.1, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank occupancy: {}", gameState.player.current_fish_owned), BLACK);
+    ui::draw_stat(sw * 0.075, sh * 0.1, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank occupancy: {} ({})", gameState.player.current_fish_owned, gameState.tank.max_fish), BLACK);
     ui::draw_stat(sw * 0.075, sh * 0.20, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Temp: {:.1}°C", gameState.tank.water_parameters.temprature), parameter_colour(
         gameState.tank.water_parameters.temprature,
         gameState.tank.ideal_parameters.temprature_range.min,
@@ -152,6 +154,13 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
             if ui::draw_button_box(sw * 0.45, sh * 0.8 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("{:.2}", gameState.economy.get_food_cost(gameState.player.current_food_level)), BLACK) {
                 return hudAction::BuyFood;
             }
+
+            //Upgrade Tank Capacity
+            ui::draw_stat(sw * 0.75, sh * 0.7 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Upgrade Tank Cap", BLACK);
+            //Testing button to add prestige to buy things
+            if ui::draw_button_box(sw * 0.75, sh * 0.8 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("{:.2}", gameState.economy.get_tank_cap_cost(gameState.player.tank_cap_level)), BLACK) {
+                return hudAction::BuyTankCap;
+            }
             
         }
         &BottomTab::Testing => {
@@ -170,7 +179,7 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
 
             if ui::draw_button_box(sw * 0.5, sh * 0.78, sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
                 Color::from_rgba(192, 192, 192, 255), "Add Fish", BLACK) {
-                return hudAction::AddFish(gameState.debugger.current_fish_debug_index);
+                return hudAction::TestAddFish(gameState.debugger.current_fish_debug_index);
             }
 
             //Testing button to add prestige to buy things

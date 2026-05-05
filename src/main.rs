@@ -130,6 +130,23 @@ async fn main() {
                                 //tank_sprites.sync(gs.tank.fish.len());
                             }
                         },
+                        hud::hudAction::TestAddFish(index) => {
+                            //same as above except no cost
+                            if let Some(species) = gs.fish_registry.fish.get(index) {
+                                if gs.tank.fish.len() < gs.tank.max_fish as usize {
+                                    gs.tank.fish.push(fish::Fish::new(species));
+                                    gs.notification.set("Fish spawned in by God I guess!", 3.0);
+                                    gs.tank.apply_traits(); //Update once fish is added
+                                    gs.tank.update_ideal_parameters(); // Update after adding
+                                    //println!("could afford fish bought!");
+                                } else {
+                                    gs.notification.set("your tank is already at capacity greedy guts!", 3.0);
+                                }
+                                
+                                //println!("[DBG] purchase count: {:?}", gs.economy.purchase_counts);
+                                //tank_sprites.sync(gs.tank.fish.len());
+                            }
+                        },
                         hud::hudAction::BuyFood => {
                             gs.player.current_food_level += 1.0;
                             if gs.player.current_food_level > gs.player.highest_food_level {
@@ -154,6 +171,14 @@ async fn main() {
                         },
                         hud::hudAction::Testing => {
                             current_tab = &hud::BottomTab::Testing;
+                        },
+                        
+                        hud::hudAction::BuyTankCap => {
+                            gs.player.tank_cap_level += 1.0;
+                            if gs.player.tank_cap_level > gs.player.highest_tank_cap_level {
+                                gs.player.highest_tank_cap_level = gs.player.tank_cap_level;
+                            }
+                            gs.tank.max_fish += 1;
                         },
                         hud::hudAction::DebugIndexIncrease => {
                             let max = gs.fish_registry.fish.len() - 1;

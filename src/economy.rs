@@ -34,4 +34,8 @@ impl Economy {
     pub fn get_food_cost(&self, player_food_level: f64) -> f64 {
         constants::BASE_FOOD_PRICE * player_food_level.powf(2.0)
     }
+
+    pub fn get_tank_cap_cost(&self, current_tank_level: f64) -> f64 {
+        constants::BASE_TANK_CAP_PRICE * current_tank_level.powf(2.5)
+    }
 }
