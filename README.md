@@ -32,7 +32,7 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 - Add more detail to offline report#
 - Make ffline report a poppup intead of cmd dbg
 - Add more fish
-- in hud.rs uppdate the parameter_colour function to account for the ideal being at teh bottom like 0.00
+- Add some way to swap between fih in the test menu
 
 ## Bugs
 - When you click a tab all elements loaded after it flash for some reason
