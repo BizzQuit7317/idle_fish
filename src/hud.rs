@@ -13,6 +13,8 @@ pub enum hudAction {
     Testing,
     AddPrestige,
     BuyFood,
+    DebugIndexIncrease,
+    DebugIndexDecrease,
     None,
 }
 
@@ -153,24 +155,35 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
             
         }
         &BottomTab::Testing => {
-            //Testing button to add more fish, uses the cot of teh first fish in index
-            if ui::draw_button_box(sw * 0.5, sh * 0.75 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Add Fish", BLACK) {
-                return hudAction::AddFish(0);
+            let selected = &gameState.fish_registry.fish[gameState.debugger.current_fish_debug_index];
+            ui::draw_stat(sw * 0.5, sh * 0.68, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT,
+                &format!("Selected: {}", selected.species), BLACK);
+
+            if ui::draw_button_box(sw * 0.44, sh * 0.78, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+                Color::from_rgba(192, 192, 192, 255), "<", BLACK) {
+                return hudAction::DebugIndexDecrease;
             }
-            //Draw text box for price underneath
-            ui::draw_stat(sw * 0.5, sh * 0.82 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Cost: {:.2} prestige", gameState.economy.get_cost(&gameState.fish_registry.fish[0])), BLACK);
+            if ui::draw_button_box(sw * 0.62, sh * 0.78, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+                Color::from_rgba(192, 192, 192, 255), ">", BLACK) {
+                return hudAction::DebugIndexIncrease;
+            }
+
+            if ui::draw_button_box(sw * 0.5, sh * 0.78, sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+                Color::from_rgba(192, 192, 192, 255), "Add Fish", BLACK) {
+                return hudAction::AddFish(gameState.debugger.current_fish_debug_index);
+            }
 
             //Testing button to add prestige to buy things
-            if ui::draw_button_box(sw * 0.15, sh * 0.75 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Add Prestige", BLACK) {
+            if ui::draw_button_box(sw * 0.15, sh * 0.78 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Add Prestige", BLACK) {
                 return hudAction::AddPrestige;
             }
             //Draw text info
-            ui::draw_stat(sw * 0.15, sh * 0.82 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Have 1000 prestige.", BLACK);
+            ui::draw_stat(sw * 0.15, sh * 0.88 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Have 1000 prestige.", BLACK);
         },
     }
 
     //Feed Button always available to player, moved lower to stop flashing
-    if ui::draw_button_box(sw * 0.75, sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Feed Fish", BLACK) {
+    if ui::draw_button_box(sw * 0.75, sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("Food lvl {}", &gameState.player.current_food_level), BLACK) {
         return hudAction::FeedFish;
     }
     

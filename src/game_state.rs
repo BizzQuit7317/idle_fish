@@ -6,6 +6,7 @@ use crate::fish;
 use crate::economy;
 use crate::ui_helper;
 use crate::offline_report;
+use crate::debug;
 
 use serde::{Serialize, Deserialize};
 
@@ -17,6 +18,7 @@ pub struct GameState {
     pub notification: ui_helper::Notification,
     pub offline_report: offline_report::OfflineReport,
     pub fish_registry: registry::FishRegistry,
+    pub debugger: debug::Debugger,
 }
 
 impl GameState {
@@ -28,6 +30,7 @@ impl GameState {
             notification: ui_helper::Notification::new(),
             offline_report: offline_report::OfflineReport::new(),
             fish_registry: registry::FishRegistry::load(),
+            debugger: debug::Debugger::new(),
         };
 
         //Need to push the fish registry to the tank so it can add fish

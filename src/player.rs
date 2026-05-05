@@ -42,6 +42,6 @@ impl Player {
 
             total_rebirths: 0,
             rebirth_multiplyer: 1.0,
-                    }
+        }
     }
 }

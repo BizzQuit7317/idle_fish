@@ -155,6 +155,15 @@ async fn main() {
                         hud::hudAction::Testing => {
                             current_tab = &hud::BottomTab::Testing;
                         },
+                        hud::hudAction::DebugIndexIncrease => {
+                            let max = gs.fish_registry.fish.len() - 1;
+                            gs.debugger.current_fish_debug_index = (gs.debugger.current_fish_debug_index + 1).min(max);
+                        },
+                        hud::hudAction::DebugIndexDecrease => {
+                            if gs.debugger.current_fish_debug_index > 0 {
+                                gs.debugger.current_fish_debug_index -= 1;
+                            }
+                        },
                         hud::hudAction::None => {}
                     }
 

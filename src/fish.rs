@@ -217,7 +217,8 @@ pub fn parameter_score(&self, parameter_value: f64, range: &ParameterRange) -> f
         self.hunger = (self.hunger - drain).max(0.0); // clamp at 0, never go negative
     }
 
-    pub fn eat(&mut self, food_level: f64) {
+    pub fn eat(&mut self, food_level: f64) { 
+        //should alsso be affected by tier a smaller fih should get more per each food than a larger one
         let restore = constants::BASE_FOOD_RESTORE * food_level.powf(1.5);
         self.hunger = (self.hunger + restore);
     }
