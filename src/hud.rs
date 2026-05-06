@@ -130,7 +130,7 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
                 ui::draw_stat(init_x, init_y + sh * 0.04, stat_width, stat_height, &format!("Age {} ({})", fish.age, fish.max_age), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.08, stat_width, stat_height, &format!("Hunger {:.2}", fish.hunger), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.12, stat_width, stat_height, &format!("Status {:?}", fish.status), BLACK);
-                ui::draw_stat(init_x, init_y + sh * 0.16, stat_width, stat_height, &format!("PPS {}", fish.base_prestige), BLACK);
+                ui::draw_stat(init_x, init_y + sh * 0.16, stat_width, stat_height, &format!("PPS {}", fish.get_prestige()), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.20, stat_width, stat_height, &format!("Traits {:.5?}", fish.fish_traits[0]), BLACK);
                 ui::draw_stat(init_x, init_y + sh * 0.24, stat_width, stat_height, &format!("Mods {:.5?}", fish.moddifiers[0]), BLACK);
 

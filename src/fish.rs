@@ -161,6 +161,30 @@ impl Fish {
         }
     }
 
+    pub fn get_prestige(&self) -> f64 {
+        /*
+            Needs to modify the output prestige of a fish based on its status
+        */
+        match &self.status {
+            FishStatus::Thriving => {
+                return 10.0
+            },
+            FishStatus::Healthy => {
+                return 2.0
+            },
+            FishStatus::Neatural => {
+                return 1.0
+            },
+            FishStatus::Sick => {
+                return 0.5
+            },
+            FishStatus::Dead => {
+                return 0.0
+            },         
+
+        }
+    }
+
     /*
         This calculation needs to check if each paramter of the water is within this fish's range
         if its not then we need to take the differenec and multiply by the WELLNESS_PENALTY_SEVERITY

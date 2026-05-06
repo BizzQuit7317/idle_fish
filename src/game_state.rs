@@ -64,8 +64,8 @@ impl GameState {
             fish.calculate_hunger();
             fish.increase_age();
 
-            self.player.current_prestige += fish.base_prestige;
-            self.player.all_time_prestige += fish.base_prestige;
+            self.player.current_prestige += fish.get_prestige();
+            self.player.all_time_prestige += fish.get_prestige();
 
             fish.alive_check(); //check alive state last so they get to live out their last year and player gets points for it
             //println!("[DBG] Fish huger {}\n~~~~~~~~~~~~~~~~~~~~~~~~~", fish.hunger);
