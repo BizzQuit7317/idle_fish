@@ -1,45 +1,93 @@
 {
   "fish": [
     {
-      "species": "Goldfish",
-      "max_age_range": { "min": 300, "max": 600 },
+      "species": "Swordtail",
+      "max_age_range": { "min": 400, "max": 700 },
       "min_group": 1,
-      "tier": "Nano",
+      "min_tank_size": 3,
+      "tier": "Community",
       "traits": [
-        { "trait_name": "TempratureBoost", "multiplier": 1.01, "weight": 1.0 }
+        { "trait_name": "GHBoost", "multiplier": 1.02, "weight": 1.0 }
       ],
       "modifiers": [
-        { "parameter": "ammonia", "modifier": 0.0025 }
+        { "parameter": "nitrate", "modifier": -0.05 }
       ],
       "base_prestige": 1.0,
       "base_cost": 25.0,
       "tolerances": {
-        "temperature_range": { "min": 10.0, "max": 22.0 },
-        "ph_range": { "min": 6.5, "max": 7.5 },
-        "gh_range": { "min": 6.0, "max": 12.0 },
-        "nitrate_range": { "min": 0.0, "max": 20.0 },
+        "temperature_range": { "min": 18.0, "max": 28.0 },
+        "ph_range": { "min": 7.0, "max": 8.0 },
+        "gh_range": { "min": 8.0, "max": 20.0 },
+        "nitrate_range": { "min": 0.0, "max": 30.0 },
         "nitrite_range": { "min": 0.0, "max": 0.5 },
         "ammonia_range": { "min": 0.0, "max": 0.25 }
       }
     },
     {
-      "species": "Guppy",
-      "max_age_range": { "min": 150, "max": 300 },
-      "min_group": 3,
-      "tier": "Nano",
+      "species": "Platy",
+      "max_age_range": { "min": 350, "max": 650 },
+      "min_group": 1,
+      "min_tank_size": 3,
+      "tier": "Community",
       "traits": [
         { "trait_name": "PHBoost", "multiplier": 1.01, "weight": 1.0 }
       ],
       "modifiers": [
-        { "parameter": "ammonia", "modifier": -0.0025 }
+        { "parameter": "ammonia", "modifier": -0.03 }
       ],
-      "base_prestige": 0.5,
-      "base_cost": 10.0,
+      "base_prestige": 1.0,
+      "base_cost": 25.0,
       "tolerances": {
-        "temperature_range": { "min": 22.0, "max": 28.0 },
-        "ph_range": { "min": 6.8, "max": 7.8 },
-        "gh_range": { "min": 8.0, "max": 12.0 },
-        "nitrate_range": { "min": 0.0, "max": 15.0 },
+        "temperature_range": { "min": 18.0, "max": 28.0 },
+        "ph_range": { "min": 7.0, "max": 8.0 },
+        "gh_range": { "min": 10.0, "max": 20.0 },
+        "nitrate_range": { "min": 0.0, "max": 25.0 },
+        "nitrite_range": { "min": 0.0, "max": 0.5 },
+        "ammonia_range": { "min": 0.0, "max": 0.25 }
+      }
+    },
+    {
+      "species": "Molly",
+      "max_age_range": { "min": 300, "max": 600 },
+      "min_group": 1,
+      "min_tank_size": 3,
+      "tier": "Community",
+      "traits": [
+        { "trait_name": "NitrateBoost", "multiplier": 0.98, "weight": 1.0 }
+      ],
+      "modifiers": [
+        { "parameter": "ph", "modifier": 0.02 }
+      ],
+      "base_prestige": 1.0,
+      "base_cost": 25.0,
+      "tolerances": {
+        "temperature_range": { "min": 20.0, "max": 28.0 },
+        "ph_range": { "min": 7.0, "max": 8.5 },
+        "gh_range": { "min": 10.0, "max": 25.0 },
+        "nitrate_range": { "min": 0.0, "max": 30.0 },
+        "nitrite_range": { "min": 0.0, "max": 0.5 },
+        "ammonia_range": { "min": 0.0, "max": 0.25 }
+      }
+    },
+    {
+      "species": "Zebra Danio",
+      "max_age_range": { "min": 500, "max": 800 },
+      "min_group": 1,
+      "min_tank_size": 3,
+      "tier": "Community",
+      "traits": [
+        { "trait_name": "NitriteBoost", "multiplier": 0.98, "weight": 1.0 }
+      ],
+      "modifiers": [
+        { "parameter": "nitrite", "modifier": -0.04 }
+      ],
+      "base_prestige": 1.0,
+      "base_cost": 25.0,
+      "tolerances": {
+        "temperature_range": { "min": 15.0, "max": 27.0 },
+        "ph_range": { "min": 6.5, "max": 7.5 },
+        "gh_range": { "min": 5.0, "max": 15.0 },
+        "nitrate_range": { "min": 0.0, "max": 25.0 },
         "nitrite_range": { "min": 0.0, "max": 0.5 },
         "ammonia_range": { "min": 0.0, "max": 0.25 }
       }
