@@ -3,6 +3,10 @@ Fish keeping idle game, simmillar to NGU or USI
 Build your aquarium with differnt fish to get the most prestigious. Your goal is to have the most efficent aquarium or some shit. much like USI or NGU the fun 
 is in the eye of the beholder
 
+## Idea
+Each fish is sort of like a v-device from USI, it has the trait which does a 1 time multiplier, and the mod which runs a constnat mod on tank params, the tank should have a series of 
+penalties for like fish or over feeding or whatever that contribute to the nitate cycles and such
+
 ## Tabs 
 - Tank (all the basic stats, can feed fish here, choose what fish are in the tank or in stock and more)
 - Fish (A page to specifically manage the fish in your tank, maybe somthing like the diggers page on NGU)
