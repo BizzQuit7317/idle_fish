@@ -17,6 +17,8 @@ pub enum hudAction {
     BuyTankCap,
     DebugIndexIncrease,
     DebugIndexDecrease,
+    StoreScrollUp,
+    StoreScrollDown,
     None,
 }
 
@@ -141,17 +143,53 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
 
         },
         &BottomTab::Store => {
-            //Draw text info
-            ui::draw_stat(sw * 0.15, sh * 0.7 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Fish Index 0", BLACK);
-            //Testing button to add prestige to buy things
-            if ui::draw_button_box(sw * 0.15, sh * 0.8 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("{:.2}", gameState.economy.get_cost(&gameState.fish_registry.fish[0])), BLACK) {
-                return hudAction::AddFish(0);
+            let cards_per_row = 2;
+            let card_area_width = sw * 0.5;
+            let card_width = card_area_width / cards_per_row as f32;
+            let card_height = sh * 0.13;
+            let visible_rows = 2;
+            let scroll = gameState.debugger.store_scroll_offset;
+
+            let fish_list = &gameState.fish_registry.fish;
+            let total_fish = fish_list.len();
+
+            // Scroll buttons
+            if ui::draw_button_box(sw * 0.47, sh * 0.70, sw * 0.03, sh * 0.04,
+                Color::from_rgba(192, 192, 192, 255), "^", BLACK) {
+                return hudAction::StoreScrollUp;
+            }
+            if ui::draw_button_box(sw * 0.47, sh * 0.92, sw * 0.03, sh * 0.04,
+                Color::from_rgba(192, 192, 192, 255), "v", BLACK) {
+                return hudAction::StoreScrollDown;
+            }
+
+            for i in 0..(cards_per_row * visible_rows) {
+                let index = scroll * cards_per_row + i;
+                if index >= total_fish { break; }
+
+                let species = &fish_list[index];
+                let col = (i % cards_per_row) as f32;
+                let row = (i / cards_per_row) as f32;
+
+                let x = col * card_width + sw * 0.01;
+                let y = sh * 0.70 + row * card_height;
+
+                draw_rectangle_lines(col * card_width, sh * 0.70 + row * card_height, card_width, card_height, 3.0, con::AREA_BORDER_COLOUR);
+
+                ui::draw_stat(x, y + sh * 0.005, card_width, sh * 0.03, &format!("{}", species.species), BLACK);
+                ui::draw_stat(x, y + sh * 0.035, card_width, sh * 0.03, &format!("Cost: {:.0}", gameState.economy.get_cost(species)), BLACK);
+                ui::draw_stat(x, y + sh * 0.065, card_width, sh * 0.03, &format!("Tier: {}", species.tier), BLACK);
+
+                if ui::draw_button_box(x, y + sh * 0.092, card_width * 0.4, sh * 0.03,
+                    Color::from_rgba(192, 192, 192, 255), "Buy", BLACK) {
+                    return hudAction::AddFish(index);
+                }
             }
             
             //Food upgrades
-            ui::draw_stat(sw * 0.45, sh * 0.7 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Upgrade Food", BLACK);
+            ui::draw_stat(sw * 0.55, sh * 0.7 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Upgrade Food", BLACK);
             //Testing button to add prestige to buy things
-            if ui::draw_button_box(sw * 0.45, sh * 0.8 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("{:.2}", gameState.economy.get_food_cost(gameState.player.current_food_level)), BLACK) {
+            if ui::draw_button_box(sw * 0.55, sh * 0.8 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("{:.2}", gameState.economy.get_food_cost(gameState.player.current_food_level)), BLACK) {
                 return hudAction::BuyFood;
             }
 

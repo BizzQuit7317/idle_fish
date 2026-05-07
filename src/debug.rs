@@ -6,12 +6,14 @@ use crate::ui_helper as ui;
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Debugger {
     pub current_fish_debug_index: usize,
+    pub store_scroll_offset: usize,
 }
 
 impl Debugger {
     pub fn new() -> Debugger {
         Debugger {
             current_fish_debug_index: 0, //default to first fish
+            store_scroll_offset: 0, //default to first
         }
     }
 }

@@ -191,6 +191,17 @@ async fn main() {
                                 gs.debugger.current_fish_debug_index -= 1;
                             }
                         },
+                        hud::hudAction::StoreScrollUp => {
+                            if gs.debugger.store_scroll_offset > 0 {
+                                gs.debugger.store_scroll_offset -= 1;
+                            }
+                        },
+                        hud::hudAction::StoreScrollDown => {
+                            let max_scroll = (gs.fish_registry.fish.len() / 3).saturating_sub(1);
+                            if gs.debugger.store_scroll_offset < max_scroll {
+                                gs.debugger.store_scroll_offset += 1;
+                            }
+                        },
                         hud::hudAction::None => {}
                     }
 
