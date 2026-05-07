@@ -83,6 +83,7 @@ pub struct Fish {
     pub max_age: u32, //Have this be some random range each fish
     pub alive: bool, //Keep track of alive or dead fish
     pub min_group: u8,
+    pub min_tank_size: u8,
     pub tier: FishTier,
     pub fish_traits: Vec<traits::Trait>,
 
@@ -108,6 +109,7 @@ impl Fish {
             max_age, //Have this be some random range each fish
             alive: true, //start on true until either health or age hit max
             min_group: species.min_group,
+            min_tank_size: species.min_tank_size,
             tier: FishTier::from_str(&species.tier), //keep hardcoded for now convert the enum later
             fish_traits: species.traits.iter().map(|t| {
                 traits::Trait::new(

@@ -50,6 +50,8 @@ async fn main() {
                             gs.tank.update_ideal_parameters();
                             file_control::save_game_json(gs);
                             tank_sprites.sync(gs.tank.fish.len());
+                            gs.player.current_prestige = 25.0;
+                            gs.player.all_time_prestige = 25.0;
                         }
                         current_page = ui_helper::GamePage::Game;
                     },

@@ -34,9 +34,9 @@ impl GameState {
         };
 
         //Need to push the fish registry to the tank so it can add fish
-        if let Some(species) = state.fish_registry.fish.iter().find(|s| s.species == "Goldfish") {
-            state.tank.fish.push(fish::Fish::new(species));
-        }
+        //if let Some(species) = state.fish_registry.fish.iter().find(|s| s.species == "Swordtail") {
+        //    state.tank.fish.push(fish::Fish::new(species));
+        //}
 
         state
     }
@@ -87,6 +87,7 @@ impl GameState {
         //Run the tanks Nitrogen Cycle and PH drift
         self.tank.nitrogen_cycle();
         self.tank.ph_drift();
+        self.tank.gh_depletion(); //Fih eating away at the minerals in the water
 
         //take a snapshoot of list len before removeing fish for tracking fish deaths, MUST ADD FISH BEFORE THIS CHECK
         let pre_death_fish_len = self.tank.fish.len() as u32;

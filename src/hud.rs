@@ -142,7 +142,7 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
         },
         &BottomTab::Store => {
             //Draw text info
-            ui::draw_stat(sw * 0.15, sh * 0.7 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "GoldFish", BLACK);
+            ui::draw_stat(sw * 0.15, sh * 0.7 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Fish Index 0", BLACK);
             //Testing button to add prestige to buy things
             if ui::draw_button_box(sw * 0.15, sh * 0.8 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("{:.2}", gameState.economy.get_cost(&gameState.fish_registry.fish[0])), BLACK) {
                 return hudAction::AddFish(0);

@@ -40,6 +40,7 @@ pub struct FishSpecies {
     pub species: String,
     pub max_age_range: AgeRange,
     pub min_group: u8,
+    pub min_tank_size: u8,
     pub tier: String,
     pub traits: Vec<SpeciesTrait>,
     pub modifiers: Vec<Modifier>,

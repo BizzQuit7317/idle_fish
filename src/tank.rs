@@ -43,9 +43,9 @@ impl WaterParameters {
             Should be set to RO water by default on a new instance
         */
         WaterParameters {
-            temprature: 20.0,
-            ph: 6.5,
-            gh: 7.0,
+            temprature: 24.0,
+            ph: 7.5,
+            gh: 12.0,
             nitrate: 0.0,
             nitrite: 0.0,
             ammonia: 0.0,
@@ -80,12 +80,12 @@ impl Tank {
         Tank{
             water_parameters: WaterParameters::new(),
             ideal_parameters: fish::Tolerances {
-                temprature_range: fish::ParameterRange::new(0.0, 40.0),   // full viable fish range in celsius
-                ph_range: fish::ParameterRange::new(0.0, 14.0),           // full pH scale
-                gh_range: fish::ParameterRange::new(0.0, 30.0),           // 0 (RO) to very hard
-                nitrate_range: fish::ParameterRange::new(0.0, 100.0),     // 0 to dangerously high
-                nitrite_range: fish::ParameterRange::new(0.0, 5.0),       // anything above 5 is lethal for most fish
-                ammonia_range: fish::ParameterRange::new(0.0, 5.0),       // same as nitrite
+                temprature_range: fish::ParameterRange::new(18.0, 28.0),   // full viable fish range in celsius
+                ph_range: fish::ParameterRange::new(7.0, 8.0),           // full pH scale
+                gh_range: fish::ParameterRange::new(8.0, 20.0),           // 0 (RO) to very hard
+                nitrate_range: fish::ParameterRange::new(0.0, 30.0),     // 0 to dangerously high
+                nitrite_range: fish::ParameterRange::new(0.0, 0.5),       // anything above 5 is lethal for most fish
+                ammonia_range: fish::ParameterRange::new(0.0, 0.25),       // same as nitrite
             },
 
             //define fish statsnew
@@ -189,8 +189,23 @@ impl Tank {
         
     }
 
+    pub fn gh_depletion(&mut self) {
+        self.water_parameters.gh -= 0.01 * self.fish.len() as f64;
+    }
+
     pub fn ph_drift(&mut self) {
-        self.water_parameters.ph += 1.0;
+        let net_acidic_force = self.water_parameters.nitrite + self.water_parameters.nitrate;
+        let net_alkaline_force = self.water_parameters.ammonia;
+        let net_force = (net_alkaline_force - net_acidic_force).abs();
+
+        let raw_drift = net_force * 0.75;
+        let buffered_drift = raw_drift / ( 1.0 + self.water_parameters.gh ); //Add a buffer from the gh, should be kh but were just calling it under general hardness
+        
+        if net_alkaline_force > net_acidic_force {
+            self.water_parameters.ph += buffered_drift;
+        } else {
+            self.water_parameters.ph -= buffered_drift;
+        }
     }
 
     pub fn nitrogen_cycle(&mut self) {
