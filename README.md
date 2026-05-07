@@ -12,6 +12,8 @@ penalties for like fish or over feeding or whatever that contribute to the nitat
 Nitrogen Cycle
 Fish Water Produce Ammonia -> Ammonia Passivly Converts to Nitrite -> Nitrite Slowly Converts to Nitrate -> Player Needs to Preform Water Change to Clear Nitrate, Ammonia and Nitrite Convert Down
 
+PH Drift
+High Ammonia Increase PH, More Ammonia More PH -> Nitrite and Nitrate Lower PH, This creates an initial flux before setteling to an equlibrium, may need buffer value
 ```
 
 ## Tabs 
