@@ -7,6 +7,13 @@ is in the eye of the beholder
 Each fish is sort of like a v-device from USI, it has the trait which does a 1 time multiplier, and the mod which runs a constnat mod on tank params, the tank should have a series of 
 penalties for like fish or over feeding or whatever that contribute to the nitate cycles and such
 
+## Chemical Cycle Flow
+```
+Nitrogen Cycle
+Fish Water Produce Ammonia -> Ammonia Passivly Converts to Nitrite -> Nitrite Slowly Converts to Nitrate -> Player Needs to Preform Water Change to Clear Nitrate, Ammonia and Nitrite Convert Down
+
+```
+
 ## Tabs 
 - Tank (all the basic stats, can feed fish here, choose what fish are in the tank or in stock and more)
 - Fish (A page to specifically manage the fish in your tank, maybe somthing like the diggers page on NGU)
