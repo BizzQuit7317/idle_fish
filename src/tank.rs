@@ -188,4 +188,55 @@ impl Tank {
         }
         
     }
+
+    pub fn ph_drift(&mut self) {
+        self.water_parameters.ph += 1.0;
+    }
+
+    pub fn nitrogen_cycle(&mut self) {
+        /*
+            The Nitrogen Cycle, fish produce Ammonia, which slowly decays into Nitrite, which in turn decays into Nitrate, the player then needs 
+            to preform a water change to remove the Nitrate
+        */
+        self.ammonia_increase(); //Update the Ammonia levels first
+        self.convert_nitrite(); //Update the Nitrite next
+        self.convert_nitrate(); //Update the Nitrate next
+
+    }
+
+    pub fn ammonia_increase(&mut self) {
+        for species in &self.fish {
+            match species.tier {
+                fish::FishTier::Nano => {
+                    self.water_parameters.ammonia += 0.1;
+                },
+                fish::FishTier::Community => {
+                    self.water_parameters.ammonia += 0.25;
+                },
+                fish::FishTier::Tropical => {
+                    self.water_parameters.ammonia += 0.4;
+                },
+                fish::FishTier::Predator => {
+                    self.water_parameters.ammonia += 0.65;
+                },
+                fish::FishTier::RiverMonster => {
+                    self.water_parameters.ammonia += 1.0;
+                },
+            }
+        }
+    }
+
+    pub fn convert_nitrite(&mut self) {
+        if self.water_parameters.ammonia > 0.5 {
+            self.water_parameters.ammonia -= 0.08;
+            self.water_parameters.nitrite += 0.08;
+        }
+    }
+
+    pub fn convert_nitrate(&mut self) {
+        if self.water_parameters.nitrite > 0.25 {
+            self.water_parameters.nitrite -= 0.06;
+            self.water_parameters.nitrate += 0.06;
+        }
+    }
 }

@@ -60,20 +60,20 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
         gameState.tank.ideal_parameters.gh_range.min,
         gameState.tank.ideal_parameters.gh_range.max,
     ));
-    ui::draw_stat(sw * 0.075, sh * 0.35, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Nitrate: {:.1}ppm", gameState.tank.water_parameters.nitrate), parameter_colour(
-        gameState.tank.water_parameters.nitrate,
-        gameState.tank.ideal_parameters.nitrate_range.min,
-        gameState.tank.ideal_parameters.nitrate_range.max,
+    ui::draw_stat(sw * 0.075, sh * 0.35, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Ammonia: {:.1}ppm", gameState.tank.water_parameters.ammonia), parameter_colour(
+        gameState.tank.water_parameters.ammonia,
+        gameState.tank.ideal_parameters.ammonia_range.min,
+        gameState.tank.ideal_parameters.ammonia_range.max,
     ));
     ui::draw_stat(sw * 0.075, sh * 0.40, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Nitrite: {:.1}ppm", gameState.tank.water_parameters.nitrite), parameter_colour(
         gameState.tank.water_parameters.nitrite,
         gameState.tank.ideal_parameters.nitrite_range.min,
         gameState.tank.ideal_parameters.nitrite_range.max,
     ));
-    ui::draw_stat(sw * 0.075, sh * 0.45, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Ammonia: {:.1}ppm", gameState.tank.water_parameters.ammonia), parameter_colour(
-        gameState.tank.water_parameters.ammonia,
-        gameState.tank.ideal_parameters.ammonia_range.min,
-        gameState.tank.ideal_parameters.ammonia_range.max,
+    ui::draw_stat(sw * 0.075, sh * 0.45, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, &format!("Tank Nitrate: {:.1}ppm", gameState.tank.water_parameters.nitrate), parameter_colour(
+        gameState.tank.water_parameters.nitrate,
+        gameState.tank.ideal_parameters.nitrate_range.min,
+        gameState.tank.ideal_parameters.nitrate_range.max,
     ));
 
     //Draw the prestige amount

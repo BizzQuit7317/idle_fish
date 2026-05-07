@@ -84,6 +84,9 @@ impl GameState {
             }
         }
         //println!("###########################################");
+        //Run the tanks Nitrogen Cycle and PH drift
+        self.tank.nitrogen_cycle();
+        self.tank.ph_drift();
 
         //take a snapshoot of list len before removeing fish for tracking fish deaths, MUST ADD FISH BEFORE THIS CHECK
         let pre_death_fish_len = self.tank.fish.len() as u32;
