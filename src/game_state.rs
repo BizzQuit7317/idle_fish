@@ -2,7 +2,6 @@ use crate::tank;
 use crate::traits;
 use crate::player;
 use crate::registry;
-use crate::fish;
 use crate::economy;
 use crate::ui_helper;
 use crate::offline_report;
