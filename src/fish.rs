@@ -169,19 +169,19 @@ impl Fish {
         */
         match &self.status {
             FishStatus::Thriving => {
-                return 10.0
+                10.0
             },
             FishStatus::Healthy => {
-                return 2.0
+                2.0
             },
             FishStatus::Neatural => {
-                return 1.0
+                1.0
             },
             FishStatus::Sick => {
-                return 0.5
+                0.5
             },
             FishStatus::Dead => {
-                return 0.0
+                0.0
             },         
 
         }
