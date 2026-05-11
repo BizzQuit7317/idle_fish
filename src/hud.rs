@@ -2,6 +2,7 @@ use macroquad::prelude::*;
 use crate::game_state;
 use crate::ui_helper as ui;
 use crate::constants as con;
+use crate::tank;
 
 pub enum hudAction {
     FeedFish,
@@ -19,6 +20,12 @@ pub enum hudAction {
     DebugIndexDecrease,
     StoreScrollUp,
     StoreScrollDown,
+    ChangeWater,
+    TestChangeStat(tank::WaterParameter, bool),
+    DebugShiftStatRight,
+    DebugShiftStatLeft,
+    DebugShiftStatPositive,
+    DebugShiftStatNegative,
     None,
 }
 
@@ -204,19 +211,21 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
         }
         &BottomTab::Testing => {
             let selected = &gameState.fish_registry.fish[gameState.debugger.current_fish_debug_index];
-            ui::draw_stat(sw * 0.5, sh * 0.68, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT,
+            let selected_param = tank::WaterParameter::ALL[gameState.debugger.current_stat_debug_index];
+
+            ui::draw_stat(sw * 0.4, sh * 0.68, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT,
                 &format!("Selected: {}", selected.species), BLACK);
 
-            if ui::draw_button_box(sw * 0.44, sh * 0.78, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+            if ui::draw_button_box(sw * 0.34, sh * 0.78, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
                 Color::from_rgba(192, 192, 192, 255), "<", BLACK) {
                 return hudAction::DebugIndexDecrease;
             }
-            if ui::draw_button_box(sw * 0.62, sh * 0.78, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+            if ui::draw_button_box(sw * 0.52, sh * 0.78, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
                 Color::from_rgba(192, 192, 192, 255), ">", BLACK) {
                 return hudAction::DebugIndexIncrease;
             }
 
-            if ui::draw_button_box(sw * 0.5, sh * 0.78, sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+            if ui::draw_button_box(sw * 0.4, sh * 0.78, sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
                 Color::from_rgba(192, 192, 192, 255), "Add Fish", BLACK) {
                 return hudAction::TestAddFish(gameState.debugger.current_fish_debug_index);
             }
@@ -227,12 +236,46 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
             }
             //Draw text info
             ui::draw_stat(sw * 0.15, sh * 0.88 , sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, "Have 1000 prestige.", BLACK);
+
+            //testing to push values up or down
+            ui::draw_stat(sw * 0.75, sh * 0.68, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT,
+                &format!("Selected: {:?}, Moving: {}", selected_param, if gameState.debugger.stat_change_direction { "+" } else { "-" }), BLACK);
+
+            if ui::draw_button_box(sw * 0.65, sh * 0.78, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+                Color::from_rgba(192, 192, 192, 255), "<", BLACK) {
+                return hudAction::DebugShiftStatLeft;
+            }
+            if ui::draw_button_box(sw * 0.91, sh * 0.78, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+                Color::from_rgba(192, 192, 192, 255), ">", BLACK) {
+                return hudAction::DebugShiftStatRight;
+            }
+
+            if ui::draw_button_box(sw * 0.70, sh * 0.88, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+                Color::from_rgba(192, 192, 192, 255), "-", BLACK) {
+                return hudAction::DebugShiftStatNegative;
+            }
+
+            if ui::draw_button_box(sw * 0.80, sh * 0.88, sw * 0.04, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+                Color::from_rgba(192, 192, 192, 255), "+", BLACK) {
+                return hudAction::DebugShiftStatPositive;
+            }
+
+            // Action button now uses selected_param instead of hardcoded ammonia
+            if ui::draw_button_box(sw * 0.75, sh * 0.78, sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+                Color::from_rgba(192, 192, 192, 255), "Change 1 Stat", BLACK) {
+                return hudAction::TestChangeStat(selected_param, gameState.debugger.stat_change_direction);
+            }
         },
     }
 
     //Feed Button always available to player, moved lower to stop flashing
     if ui::draw_button_box(sw * 0.75, sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("Food lvl {}", &gameState.player.current_food_level), BLACK) {
         return hudAction::FeedFish;
+    }
+
+    //Water change button
+    if ui::draw_button_box(sw * 0.2, sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), &format!("Water Change {}%", &gameState.player.water_change_percent), BLACK) {
+        return hudAction::ChangeWater;
     }
     
     //Dispplay the notification pop up

@@ -1,6 +1,16 @@
 // constants.rs
 use macroquad::prelude::*;
 
+//Tank Base water parameters
+pub const TAP_WATER_TEMPRATURE: f64 = 24.0;
+pub const TAP_WATER_PH: f64 = 7.5;
+pub const TAP_WATER_GH: f64 = 12.0;
+pub const TAP_WATER_NITRATE: f64 = 0.0;
+pub const TAP_WATER_NITRITE: f64 = 0.0;
+pub const TAP_WATER_AMMONIA: f64 = 0.0;
+
+pub const WATER_CHANGE_COOLDOWN: f32 = 100.0; //kill me later
+
 //wellness
 pub const WELLNESS_THRIVING: f64 = 80.0;
 pub const WELLNESS_HEALTHY: f64 = 60.0;

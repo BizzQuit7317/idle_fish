@@ -98,6 +98,7 @@ async fn main() {
                 }
                 if let Some(gs) = &mut game_state {
                     gs.notification.tick(get_frame_time());
+                    gs.tank.tick_cooldown(get_frame_time());
                 }
 
                 clear_background(DARKGREEN);
@@ -201,6 +202,53 @@ async fn main() {
                             if gs.debugger.store_scroll_offset < max_scroll {
                                 gs.debugger.store_scroll_offset += 1;
                             }
+                        },
+                        hud::hudAction::ChangeWater => {
+                            if gs.tank.can_change_water() {
+                                gs.tank.water_change(gs.player.water_change_percent, gs.player.water_change_cooldown);
+                                gs.notification.set("Water change complete!", 2.0);
+                            } else {
+                                gs.notification.set("Water change on cooldown", 2.0);
+                            }
+                        },
+                        hud::hudAction::TestChangeStat(stat, direction) => {
+                            if direction {
+                                match stat {
+                                    tank::WaterParameter::temprature => {gs.tank.water_parameters.temprature += 1.0},
+                                    tank::WaterParameter::ph => {gs.tank.water_parameters.ph += 1.0;},
+                                    tank::WaterParameter::gh => {gs.tank.water_parameters.gh += 1.0;},
+                                    tank::WaterParameter::nitrate => {gs.tank.water_parameters.nitrate += 1.0;},
+                                    tank::WaterParameter::nitrite => {gs.tank.water_parameters.nitrite += 1.0;},
+                                    tank::WaterParameter::ammonia => {gs.tank.water_parameters.ammonia += 1.0;},
+                                }
+                            } else {
+                                match stat {
+                                    tank::WaterParameter::temprature => {gs.tank.water_parameters.temprature -= 1.0;},
+                                    tank::WaterParameter::ph => {gs.tank.water_parameters.ph -= 1.0;},
+                                    tank::WaterParameter::gh => {gs.tank.water_parameters.gh -= 1.0;},
+                                    tank::WaterParameter::nitrate => {gs.tank.water_parameters.nitrate -= 1.0;},
+                                    tank::WaterParameter::nitrite => {gs.tank.water_parameters.nitrite -= 1.0;},
+                                    tank::WaterParameter::ammonia => {gs.tank.water_parameters.ammonia -= 1.0;},
+                                }
+                            }
+                            
+                        },
+                        hud::hudAction::DebugShiftStatLeft => {
+                            if gs.debugger.current_stat_debug_index == 0 {
+                                gs.debugger.current_stat_debug_index = tank::WaterParameter::ALL.len() - 1;
+                            } else {
+                                gs.debugger.current_stat_debug_index -= 1;
+                            }
+                        },
+                        hud::hudAction::DebugShiftStatRight => {
+                            gs.debugger.current_stat_debug_index = 
+                                (gs.debugger.current_stat_debug_index + 1) % tank::WaterParameter::ALL.len();
+                        },
+                        hud::hudAction::DebugShiftStatPositive => {
+                            gs.debugger.stat_change_direction = true;
+                        },
+                        hud::hudAction::DebugShiftStatNegative => {
+                            gs.debugger.stat_change_direction = false;
                         },
                         hud::hudAction::None => {}
                     }

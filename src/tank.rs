@@ -2,8 +2,9 @@ use serde::{Serialize, Deserialize};
 
 use crate::fish;
 use crate::traits;
+use crate::constants;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub enum WaterParameter {
     temprature,
     ph,
@@ -11,6 +12,17 @@ pub enum WaterParameter {
     nitrate,
     nitrite,
     ammonia,
+}
+
+impl WaterParameter {
+    pub const ALL: [WaterParameter; 6] = [
+        WaterParameter::temprature,
+        WaterParameter::ph,
+        WaterParameter::gh,
+        WaterParameter::nitrate,
+        WaterParameter::nitrite,
+        WaterParameter::ammonia,
+    ];
 }
 
 impl WaterParameter {
@@ -43,12 +55,12 @@ impl WaterParameters {
             Should be set to RO water by default on a new instance
         */
         WaterParameters {
-            temprature: 24.0,
-            ph: 7.5,
-            gh: 12.0,
-            nitrate: 0.0,
-            nitrite: 0.0,
-            ammonia: 0.0,
+            temprature: constants::TAP_WATER_TEMPRATURE,
+            ph: constants::TAP_WATER_PH,
+            gh: constants::TAP_WATER_GH,
+            nitrate: constants::TAP_WATER_NITRATE,
+            nitrite: constants::TAP_WATER_NITRITE,
+            ammonia: constants::TAP_WATER_AMMONIA,
         }
     }
 
@@ -69,6 +81,7 @@ pub struct Tank {
     //define the water parameterss
     pub water_parameters: WaterParameters,
     pub ideal_parameters: fish::Tolerances,
+    pub water_change_cooldown: f32,
 
     //define fish stats
     pub max_fish: u8,
@@ -81,12 +94,13 @@ impl Tank {
             water_parameters: WaterParameters::new(),
             ideal_parameters: fish::Tolerances {
                 temprature_range: fish::ParameterRange::new(18.0, 28.0),   // full viable fish range in celsius
-                ph_range: fish::ParameterRange::new(7.0, 8.0),           // full pH scale
+                ph_range: fish::ParameterRange::new(0.0, 14.0),           // full pH scale
                 gh_range: fish::ParameterRange::new(8.0, 20.0),           // 0 (RO) to very hard
                 nitrate_range: fish::ParameterRange::new(0.0, 30.0),     // 0 to dangerously high
                 nitrite_range: fish::ParameterRange::new(0.0, 0.5),       // anything above 5 is lethal for most fish
                 ammonia_range: fish::ParameterRange::new(0.0, 0.25),       // same as nitrite
             },
+            water_change_cooldown: 0.0,
 
             //define fish statsnew
             max_fish: 3,
@@ -261,5 +275,28 @@ impl Tank {
             self.water_parameters.nitrite -= 0.06;
             self.water_parameters.nitrate += 0.06;
         }
+    }
+
+    pub fn tick_cooldown(&mut self, delta: f32) {
+        if self.water_change_cooldown > 0.0 {
+            self.water_change_cooldown -= delta;
+        }
+    }
+
+    pub fn can_change_water(&self) -> bool {
+        self.water_change_cooldown <= 0.0
+    }
+
+    pub fn water_change(&mut self, percent_to_change: u32, cooldown: f32) {
+        let change_fraction : f64 = percent_to_change as f64 / 100.0;
+
+        self.water_parameters.temprature = self.water_parameters.temprature * ( 1.0 - change_fraction ) + constants::TAP_WATER_TEMPRATURE * change_fraction;
+        self.water_parameters.ph = self.water_parameters.ph * ( 1.0 - change_fraction ) + constants::TAP_WATER_PH * change_fraction;
+        self.water_parameters.gh = self.water_parameters.gh * ( 1.0 - change_fraction ) + constants::TAP_WATER_GH * change_fraction;
+        self.water_parameters.nitrate = self.water_parameters.nitrate * ( 1.0 - change_fraction ) + constants::TAP_WATER_NITRATE * change_fraction;
+        self.water_parameters.nitrite = self.water_parameters.nitrite * ( 1.0 - change_fraction ) + constants::TAP_WATER_NITRITE * change_fraction;
+        self.water_parameters.ammonia = self.water_parameters.ammonia * ( 1.0 - change_fraction ) + constants::TAP_WATER_AMMONIA * change_fraction;
+
+        self.water_change_cooldown = cooldown;
     }
 }

@@ -7,6 +7,8 @@ use crate::ui_helper as ui;
 pub struct Debugger {
     pub current_fish_debug_index: usize,
     pub store_scroll_offset: usize,
+    pub stat_change_direction: bool, //false for negative and true for positive
+    pub current_stat_debug_index: usize,
 }
 
 impl Debugger {
@@ -14,6 +16,8 @@ impl Debugger {
         Debugger {
             current_fish_debug_index: 0, //default to first fish
             store_scroll_offset: 0, //default to first
+            stat_change_direction: false, //start at false
+            current_stat_debug_index: 0,
         }
     }
 }

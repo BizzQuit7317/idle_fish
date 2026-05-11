@@ -9,6 +9,9 @@ pub struct Player {
     pub current_food_level: f64,
     pub highest_food_level: f64,
 
+    pub water_change_percent: u32, //only needs to track the percent of water to change
+    pub water_change_cooldown: f32, //counted in seconds
+
     pub tank_cap_level: f64,
     pub highest_tank_cap_level: f64,
 
@@ -33,6 +36,9 @@ impl Player {
 
             current_food_level: 1.0, //Always resets to 1.0 on rebirth
             highest_food_level: 1.0,
+
+            water_change_percent: 20, //a base of a 20% water change
+            water_change_cooldown: 100.0, //start with a base cooldown of 100 seconds
 
             tank_cap_level: 1.0,
             highest_tank_cap_level: 1.0,
