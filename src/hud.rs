@@ -179,6 +179,7 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
                 ui::draw_stat(x, y + sh * 0.005, card_width, sh * 0.03, &format!("{}", species.species), BLACK);
                 ui::draw_stat(x, y + sh * 0.035, card_width, sh * 0.03, &format!("Cost: {:.0}", gameState.economy.get_cost(species)), BLACK);
                 ui::draw_stat(x, y + sh * 0.065, card_width, sh * 0.03, &format!("Tier: {}", species.tier), BLACK);
+                ui::draw_stat(x, y + sh * 0.095, card_width, sh * 0.03, &format!("Mod: {:?}", species.modifiers[0]), BLACK);
 
                 if ui::draw_button_box(x, y + sh * 0.092, card_width * 0.4, sh * 0.03,
                     Color::from_rgba(192, 192, 192, 255), "Buy", BLACK) {

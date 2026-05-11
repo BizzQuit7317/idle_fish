@@ -194,17 +194,25 @@ impl Tank {
     }
 
     pub fn ph_drift(&mut self) {
-        let net_acidic_force = self.water_parameters.nitrite + self.water_parameters.nitrate;
-        let net_alkaline_force = self.water_parameters.ammonia;
-        let net_force = (net_alkaline_force - net_acidic_force).abs();
+        if self.water_parameters.ph >= 0.0 && self.water_parameters.ph <= 14.0 {
+            let net_acidic_force = self.water_parameters.nitrite + self.water_parameters.nitrate;
+            let net_alkaline_force = self.water_parameters.ammonia;
+            let net_force = (net_alkaline_force - net_acidic_force).abs();
 
-        let raw_drift = net_force * 0.75;
-        let buffered_drift = raw_drift / ( 1.0 + self.water_parameters.gh ); //Add a buffer from the gh, should be kh but were just calling it under general hardness
-        
-        if net_alkaline_force > net_acidic_force {
-            self.water_parameters.ph += buffered_drift;
-        } else {
-            self.water_parameters.ph -= buffered_drift;
+            let raw_drift = net_force * 0.75;
+            let buffered_drift = raw_drift / ( 1.0 + self.water_parameters.gh ); //Add a buffer from the gh, should be kh but were just calling it under general hardness
+            
+            if net_alkaline_force > net_acidic_force {
+                self.water_parameters.ph += buffered_drift;
+            } else {
+                self.water_parameters.ph -= buffered_drift;
+            }
+        } else if self.water_parameters.ph > 14.0 {
+            //reset ph down to 14
+            self.water_parameters.ph = 14.0;
+        } else if self.water_parameters.ph < 0.0 {
+            //reset ph up to 0
+            self.water_parameters.ph = 0.0;
         }
     }
 
