@@ -10,7 +10,7 @@
  
 *prestige points. nitrogen cycles. fish vibes.*
  
-[![Status](https://img.shields.io/badge/status-actively_neglecting_my_virtual_fish-blue?style=flat-square)](.)
+[![Status](https://img.shields.io/badge/status-activly thinking about addding shrimps-blue?style=flat-square)](.)
 [![Genre](https://img.shields.io/badge/genre-idle%20%2F%20incremental-teal?style=flat-square)](.)
 [![Inspiration](https://img.shields.io/badge/inspired_by-NGU%20%7C%20USI-purple?style=flat-square)](.)
  
