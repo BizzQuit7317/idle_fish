@@ -19,15 +19,15 @@
  
 ## 🌊 What is this?
  
-An aquarium idle game. You keep fish. Fish generate prestige. Prestige unlocks more fish. The tank gets out of hand. You reset. You do it again. You tell yourself *this time you'll optimise better.*
+An aquarium idle game. You keep fish. Fish generate prestige. Prestige unlocks more fish.*
  
-Much like NGU Idle or Universal Sploder Idle, the fun is entirely in the eye of the beholder. If you enjoy watching numbers go up while managing nitrogen cycles and debating whether a second filter is worth the component slot — **this game is for you.**
+Much like NGU Idle or Unnamed Space Idle, you need to try and balance an array of stats and parameters to increasse your numbers!
  
 ---
  
-## 🧪 The Chemistry (it's actually real)
+## 🧪 The Chemistry
  
-idle_fish simulates a real-ish nitrogen cycle because we're committed to making you learn biochemistry by accident.
+idle_fish simulates a real-ish nitrogen cycle.
  
 ```
 AMMONIA ──(passive)──► NITRITE ──(slow)──► NITRATE
@@ -45,49 +45,45 @@ AMMONIA ──(passive)──► NITRITE ──(slow)──► NITRATE
 - Ammonia converts to **Nitrite** → also bad, lowers pH
 - Nitrite converts to **Nitrate** → less bad, but builds up
 - You do a **water change** to reset nitrate, or your fish suffer
-Managing this is literally the core loop. Your fish's wellness depends on how well you keep the water parameters in check.
+Managing this is the core loop. Your fish's wellness depends on how well you keep the water parameters in check.
  
 ---
  
 ## 🐟 Fish
  
-Each fish works like a v-device from USI — they have two things going on:
+Each fish works like a equip item — they have two things going on:
  
 | Property | What it does |
 |----------|-------------|
-| **Trait** | A one-time prestige multiplier on purchase |
-| **Modifier** | A passive modifier to your tank parameters |
+| **Trait** | A one-time multiplier on addition to tank |
+| **Modifier** | A passive modifier to your tank parameters per tick |
  
 Fish also have:
 - **Tolerances** — temperature, pH, GH, nitrate, nitrite, ammonia ranges they can survive in
-- **Hunger** — scales faster the lower it gets, also affected by wellness
+- **Hunger** — scales faster the lower it gets, also effects wellness
 - **Age** — each species ages differently
-- **Wellness** — calculated from water params, hunger, and age
+- **Wellness** — a calculated average between the hunger and parmeter ranges
 ---
  
 ## 🗂️ Tabs
  
-| Tab | Status | Description |
+| Tab | Status | Description | Built status |
 |-----|--------|-------------|
-| 🪣 **Tank** | Always available | Core stats, feeding, fish assignment |
-| 🐠 **Fish** | Always available | Manage your fish (think: NGU Diggers page) |
-| ⚙️ **Components** | Always available | Filters, heaters, and other hardware |
-| 🏪 **Store** | Always available | Buy fish, food, components |
-| 🪸 **Decorations** | Unlock early | Passive bonuses (like v-devices from USI) |
-| 🧴 **Chemicals** | Mid-game | Spike or adjust water params; Quick Start on rebirth |
-| 🏆 **Prestige** | Unlockable | Rebirth — reset tank to RO water, keep some bonuses |
-| 🔧 **Sump** | Late game | Extra component slots + special fish for big multipliers |
- 
+| 🪣 **FishStatus** | Always available | Stats of all active fish in tank | Built |
+| 🐠 **Store** | Always available | Area to buy fish and core upgrades) | Built |
+| ⚙️ **Components** | Unlock early | Filters, heaters, and other hardware | Not Built |
+| 🪸 **Decorations** | Unlock early | Passive bonuses (like v-devices from USI) | Not Built |
+| 🧴 **Chemicals** | Mid-game | Spike or adjust water params; Quick Start on rebirth | Not Built |
+| 🏆 **Prestige** | Unlockable | Rebirth — reset tank to RO water, keep some bonuses | Not Built |
+| 🔧 **Sump** | Late game |  its own mini eco system with it own components, chemicals carry over, and sump specific fish | Not Built |
+
+ - More tabs to come in future
 ---
  
 ## 🔁 Game Loop
  
 ```
 Start: Empty tank of RO water at room temperature
-         │
-         ▼
-    Buy components
-    (filter, heater, etc.)
          │
          ▼
     Buy fish → fish generate prestige points
@@ -112,9 +108,9 @@ Start: Empty tank of RO water at room temperature
  
 ## 🛠️ Tech Notes
  
-**Fish data** is stored as a binary file to stop people editing their save like little cheats. A converter script takes a friendly `.json` and spits out the `.bin` the game actually uses.
+**Fish data** is stored as a binary file to stop people editing their save like little cheecky bastards. A converter script takes a friendly `.json` and spits out the `.bin` the game actually uses (see the json_bin_converter dir).
  
-### Fish JSON structure (for the converter)
+### Fish JSON structure (for the converter) (NEED TO UPDATE)
  
 ```json
 {
@@ -147,16 +143,16 @@ Start: Empty tank of RO water at room temperature
  
 ## 📋 Roadmap
  
-### 🔧 In Progress
-- [ ] Hunger formula (scales faster at low values, affected by wellness)
+### 🔧 In Progress Main
+- [ ] Build Debugger/Cheats page in settings
+- [ ] Balance numbers
+### 🔧 In Progress Side/Later
 - [ ] Per-species age rates (`age_rate` marker)
-- [ ] Wellness calculation factoring in hunger + age (not just water params)
-- [ ] Different foods with different hunger values
-- [ ] Food drop animation
 - [ ] Offline time limit + proper offline report popup
 - [ ] More fish species
-- [ ] Fish swap in test menu
+### 🔧 In Progress QoL
 - [ ] Nicer notification pop-ups
+- [ ] Food drop animation
 ### 🐛 Known Bugs
 - [ ] Tab click causes all later-loaded elements to flash briefly
 - [ ] Store has a long initial load
@@ -167,7 +163,7 @@ Start: Empty tank of RO water at room temperature
 ## 🙏 Inspired By
  
 - **[NGU Idle](https://store.steampowered.com/app/1073970/NGU_IDLE/)** — for the diggers-style management UI and general idle insanity
-- **[Universal Sploder Idle](https://www.kongregate.com/games/StickMan6040/universal-paperclips)** — for the v-device / trait + modifier system
+- **[Unnamed Space Idle](https://store.steampowered.com/app/2471100/Unnamed_Space_Idle/)** — for the v-device / trait + modifier system
 ---
  
 <div align="center">
