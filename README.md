@@ -68,7 +68,7 @@ Fish also have:
 ## 🗂️ Tabs
  
 | Tab | Status | Description | Built status |
-|-----|--------|-------------|
+|-----|--------|-------------|--------------|
 | 🪣 **FishStatus** | Always available | Stats of all active fish in tank | Built |
 | 🐠 **Store** | Always available | Area to buy fish and core upgrades) | Built |
 | ⚙️ **Components** | Unlock early | Filters, heaters, and other hardware | Not Built |
