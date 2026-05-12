@@ -1,7 +1,7 @@
-║  🐠 i d l e _ f i s h  🐠              ║
-║  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~     ║
-║  the aquarium idle game nobody asked    ║
-║  for but everyone deserves              ║
+║  🐠 i d l e _ f i s h  🐠              ║\n
+║  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~     ║\n
+║  the aquarium idle game nobody asked    ║\n
+║  for but everyone deserves              ║\n
 
  
 *prestige points. nitrogen cycles. fish vibes.*
