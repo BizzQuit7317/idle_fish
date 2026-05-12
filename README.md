@@ -1,9 +1,8 @@
-╔══════════════════════════════════════════╗
 ║  🐠 i d l e _ f i s h  🐠              ║
 ║  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~     ║
 ║  the aquarium idle game nobody asked    ║
 ║  for but everyone deserves              ║
-╚══════════════════════════════════════════╝
+
  
 *prestige points. nitrogen cycles. fish vibes.*
  
