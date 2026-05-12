@@ -26,7 +26,6 @@ All tabs from this point on should be unlocked at various stages
 - Chemicals (not sure of an equivelent but allows the player to add chemicals to the water to spike or change certain things, maybe at somepoint gives the player an option to use like quick start on rebirth)
 - Prestige page (not sure if this should be unlocked or not, but should just be a rebirth, some stats are kept but the tank is set to basic RO water again, typicall rebirth stuff)
 - Sump (potentially mid or late game expansion that gives the player a sump where they can add additional components and special fish for massive bonuses)
-- In the feed wellness calcualtion hunger is weighted aass half of the total comapred to paramters, double check that logic later
 
 ## General Game loop
 At the start the player just has a empty tank of RO water, it sitting at room temprature, the player must use their money to buy some components and soome fish
@@ -47,6 +46,7 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 - Make ffline report a poppup intead of cmd dbg
 - Add more fish
 - Add some way to swap between fih in the test menu
+- In the feed wellness calcualtion hunger is weighted aass half of the total comapred to paramters, double check that logic later
 
 ## Bugs
 - When you click a tab all elements loaded after it flash for some reason
