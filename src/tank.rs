@@ -66,7 +66,7 @@ impl WaterParameters {
 
     pub fn apply_changes(&mut self, parameter: &WaterParameter, value: f64) {
         match parameter {
-            WaterParameter::temprature => self.temprature -= value,
+            WaterParameter::temprature => self.temprature += value,
             WaterParameter::ph => self.ph += value,
             WaterParameter::gh => self.gh += value,
             WaterParameter::nitrate => self.nitrate += value,
@@ -142,22 +142,22 @@ impl Tank {
             self.ideal_parameters.nitrite_range = fish::ParameterRange::new(0.0, 0.0);
             self.ideal_parameters.ammonia_range = fish::ParameterRange::new(0.0, 0.0);
         } else {
-            let mut new_min_temp = f64::MAX;
+            let mut new_min_temp = f64::MIN;
             let mut new_max_temp = f64::MAX;
 
-            let mut new_min_ph = f64::MAX;
+            let mut new_min_ph = f64::MIN;
             let mut new_max_ph = f64::MAX;
 
-            let mut new_min_gh = f64::MAX;
+            let mut new_min_gh = f64::MIN;
             let mut new_max_gh = f64::MAX;
 
-            let mut new_min_nitrate = f64::MAX;
+            let mut new_min_nitrate = f64::MIN;
             let mut new_max_nitrate = f64::MAX;
 
-            let mut new_min_nitrite = f64::MAX;
+            let mut new_min_nitrite = f64::MIN;
             let mut new_max_nitrite = f64::MAX;
 
-            let mut new_min_ammonia = f64::MAX;
+            let mut new_min_ammonia = f64::MIN;
             let mut new_max_ammonia = f64::MAX;
 
             for fish in &self.fish {
@@ -203,30 +203,30 @@ impl Tank {
         
     }
 
+    pub fn parameter_clamp(&mut self) {
+        self.water_parameters.ph = self.water_parameters.ph.clamp(0.0, 14.0);
+        self.water_parameters.gh = self.water_parameters.gh.max(0.0);
+        self.water_parameters.ammonia = self.water_parameters.ammonia.max(0.0);
+        self.water_parameters.nitrite = self.water_parameters.nitrite.max(0.0);
+        self.water_parameters.nitrate = self.water_parameters.nitrate.max(0.0);
+    }
+
     pub fn gh_depletion(&mut self) {
         self.water_parameters.gh -= 0.01 * self.fish.len() as f64;
     }
 
     pub fn ph_drift(&mut self) {
-        if self.water_parameters.ph >= 0.0 && self.water_parameters.ph <= 14.0 {
-            let net_acidic_force = self.water_parameters.nitrite + self.water_parameters.nitrate;
-            let net_alkaline_force = self.water_parameters.ammonia;
-            let net_force = (net_alkaline_force - net_acidic_force).abs();
+        let net_acidic_force = self.water_parameters.nitrite + self.water_parameters.nitrate;
+        let net_alkaline_force = self.water_parameters.ammonia;
+        let net_force = (net_alkaline_force - net_acidic_force).abs();
 
-            let raw_drift = net_force * 0.75;
-            let buffered_drift = raw_drift / ( 1.0 + self.water_parameters.gh ); //Add a buffer from the gh, should be kh but were just calling it under general hardness
-            
-            if net_alkaline_force > net_acidic_force {
-                self.water_parameters.ph += buffered_drift;
-            } else {
-                self.water_parameters.ph -= buffered_drift;
-            }
-        } else if self.water_parameters.ph > 14.0 {
-            //reset ph down to 14
-            self.water_parameters.ph = 14.0;
-        } else if self.water_parameters.ph < 0.0 {
-            //reset ph up to 0
-            self.water_parameters.ph = 0.0;
+        let raw_drift = net_force * 0.75;
+        let buffered_drift = raw_drift / ( 1.0 + self.water_parameters.gh ); //Add a buffer from the gh, should be kh but were just calling it under general hardness
+        
+        if net_alkaline_force > net_acidic_force {
+            self.water_parameters.ph += buffered_drift;
+        } else {
+            self.water_parameters.ph -= buffered_drift;
         }
     }
 

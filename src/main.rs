@@ -63,7 +63,7 @@ async fn main() {
                             let offline_seconds = now.saturating_sub(gs.player.last_save_time);
                             let mut offline_prestige = gs.player.current_prestige;
                             for _ in 0..offline_seconds {
-                                gs.tick();
+                            gs.tick();
                             }
                             offline_prestige = gs.player.current_prestige - offline_prestige;
 
@@ -208,7 +208,7 @@ async fn main() {
                                 gs.tank.water_change(gs.player.water_change_percent, gs.player.water_change_cooldown);
                                 gs.notification.set("Water change complete!", 2.0);
                             } else {
-                                gs.notification.set("Water change on cooldown", 2.0);
+                                gs.notification.set(&format!("Water change on cooldown {} seconds", gs.player.water_change_cooldown), 2.0);
                             }
                         },
                         hud::hudAction::TestChangeStat(stat, direction) => {

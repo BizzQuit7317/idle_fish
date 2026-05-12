@@ -88,6 +88,8 @@ impl GameState {
         self.tank.ph_drift();
         self.tank.gh_depletion(); //Fih eating away at the minerals in the water
 
+        self.tank.parameter_clamp(); //Finally clamp all parameters to nt go beyond limits
+
         //take a snapshoot of list len before removeing fish for tracking fish deaths, MUST ADD FISH BEFORE THIS CHECK
         let pre_death_fish_len = self.tank.fish.len() as u32;
 
