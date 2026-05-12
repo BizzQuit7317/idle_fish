@@ -110,13 +110,14 @@ Start: Empty tank of RO water at room temperature
  
 **Fish data** is stored as a binary file to stop people editing their save like little cheecky bastards. A converter script takes a friendly `.json` and spits out the `.bin` the game actually uses (see the json_bin_converter dir).
  
-### Fish JSON structure (for the converter) (NEED TO UPDATE)
+### Fish JSON structure (for the converter)
  
 ```json
 {
   "species": "neon_tetra",
   "max_age_range": { "min": 5000, "max": 8000 },
   "min_group": 6,
+  "min_tank_size": 3,
   "tier": "common",
   "traits": [
     { "trait_name": "schooling", "multiplier": 1.4, "weight": 0.6 }
