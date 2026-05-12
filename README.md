@@ -50,6 +50,7 @@ If you feel like your tank is getting slow or starting to build to much debre yo
 ## Bugs
 - When you click a tab all elements loaded after it flash for some reason
 - Initial load on store long
+- in file_control, will panic if cannot find a save file for whatever reason and carsh game
 
 ## General
 The fish data is stred as a binary file to stop player playing around with it, use a converter script to convert a json file that is easy to work with into a bin file you can use
