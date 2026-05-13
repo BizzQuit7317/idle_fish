@@ -79,6 +79,17 @@ Fish also have:
 
  - More tabs to come in future
 ---
+
+## ⚙️ Settins Tabs
+ 
+| Tab | Status | Description | Built status |
+|-----|--------|-------------|--------------|
+| 🪣  **Game** | Always available | Options for the stats, partially a debug menu for now | Not Built |
+| 🏆  **Player Stats** | Always available | A plain text view of all the player stats for future debugging | Not Built |
+| 🔧 **Options** | Always available | A proper options or moore standard settings page | Not Built |
+
+ - More tabs to come in future
+---
  
 ## 🔁 Game Loop
  
