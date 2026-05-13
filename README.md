@@ -151,6 +151,7 @@ Start: Empty tank of RO water at room temperature
 - [ ] Per-species age rates (`age_rate` marker)
 - [ ] Offline time limit + proper offline report popup
 - [ ] More fish species
+- [ ] More robust prestige calculation per fish
 ### 🔧 In Progress QoL
 - [ ] Nicer notification pop-ups
 - [ ] Food drop animation
