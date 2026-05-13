@@ -38,6 +38,8 @@ async fn main() {
     let mut last_page = ui_helper::GamePage::MainMenu;
     let mut tick_timer = 0.0f32; //control the frame speed
     let mut current_tab = &hud::BottomTab::FishStats; //set FishStats as the dedfault tab for now
+    let mut setting_state = settings::SettingsState::new();
+    let mut current_settings_tab = &settings::SettingTab::Game; //set Game tab as the default
 
     loop {
         match current_page {
@@ -263,13 +265,19 @@ async fn main() {
             },
             ui_helper::GamePage::Settings => {
                 clear_background(BLUE);
-                match settings::draw_settings_menu(&last_page) {
+                match settings::draw_settings_menu(&last_page, &mut setting_state, current_settings_tab) {
                     settings::settingChoice::MainMenu => {
                         current_page = ui_helper::GamePage::MainMenu;
                     },
                     settings::settingChoice::GameMenu => {
                         current_page = ui_helper::GamePage::Game;
                     },
+                    settings::settingChoice::Game => {
+                        current_settings_tab = &settings::SettingTab::Game;
+                    },
+                    settings::settingChoice::PlayerStats => {
+                        current_settings_tab = &settings::SettingTab::PlayerStats;
+                    }, 
                     settings::settingChoice::None => {},
                 }
 

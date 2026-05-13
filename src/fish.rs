@@ -169,19 +169,19 @@ impl Fish {
         */
         match &self.status {
             FishStatus::Thriving => {
-                10.0
+                self.base_prestige * 10.0
             },
             FishStatus::Healthy => {
-                2.0
+                self.base_prestige * 2.0
             },
             FishStatus::Neatural => {
-                1.0
+                self.base_prestige * 1.0
             },
             FishStatus::Sick => {
-                0.5
+                self.base_prestige * 0.5
             },
             FishStatus::Dead => {
-                0.0
+                self.base_prestige * 0.0
             },         
 
         }
@@ -205,7 +205,8 @@ impl Fish {
 
     //println!("[DBG]scores temp_score{} ph_score{} gh_score{} nitrate_score{} nitrite_score{} ammonia_score{} average_param_score{}", temp_score, ph_score, gh_score, nitrate_score, nitrite_score, ammonia_score, average_param_score);
 
-    self.wellness = average_param_score; // Need to also mdify by hunger so wellness drops at low hunger
+    let combined = (average_param_score + self.hunger) / 2.0; // hunger weighted equal to *all params combined* self.hunger already a score from 1-100
+    self.wellness = combined;
 }
 
 pub fn parameter_score(&self, parameter_value: f64, range: &ParameterRange) -> f64 {
@@ -232,6 +233,7 @@ pub fn parameter_score(&self, parameter_value: f64, range: &ParameterRange) -> f
     }
 
     pub fn calculate_hunger(&mut self) {
+        //clamp too 0, with 100 clamp in eat function 
         let drain = match self.tier {
             FishTier::Nano         => constants::HUNGER_DRAIN_NANO,
             FishTier::Community    => constants::HUNGER_DRAIN_COMMUNITY,
@@ -240,13 +242,16 @@ pub fn parameter_score(&self, parameter_value: f64, range: &ParameterRange) -> f
             FishTier::RiverMonster => constants::HUNGER_DRAIN_RIVER_MONSTER,
         };
 
-        self.hunger = (self.hunger - drain).max(0.0); // clamp at 0, never go negative
+        let hunger_factor = 2.0_f64.powf((50.0 - self.hunger) / 50.0);
+
+        self.hunger = (self.hunger - drain * hunger_factor).max(0.0);
     }
 
-    pub fn eat(&mut self, food_level: f64) { 
+    pub fn eat(&mut self, food_level: f64) {
+        //clamp too 100, with 0 clamp in calculate_hunger function 
         //should alsso be affected by tier a smaller fih should get more per each food than a larger one
         let restore = constants::BASE_FOOD_RESTORE * food_level.powf(1.5);
-        self.hunger = (self.hunger + restore);
+        self.hunger = (self.hunger + restore).min(100.0);
     }
 
     pub fn increase_age(&mut self) {

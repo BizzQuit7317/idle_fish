@@ -2,6 +2,7 @@ use macroquad::prelude::*;
 use serde::{Serialize, Deserialize}; 
 
 use crate::ui_helper as ui;
+use crate::constants as con;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Debugger {
@@ -68,3 +69,10 @@ pub fn draw_debug_zones() {
     ui::draw_debug_box(0.0, screen_height() * 0.025, screen_width(), screen_height() * 0.1, "top tabs");
 }
 
+pub fn draw_settings_debug_zones() {
+    //Usable area for Tabs
+    ui::draw_debug_box(screen_width() * 0.025, screen_height() * 0.15, screen_width() * 0.925, screen_height() * con::TAB_BUTTON_BOX_SCALE_HEIGHT, "tabs space");
+
+    //Functional Space
+    ui::draw_debug_box(screen_width() * 0.025, screen_height() * 0.3, screen_width() * 0.925, screen_height() * 0.4, "functional space");
+}
