@@ -84,8 +84,8 @@ Fish also have:
  
 | Tab | Status | Description | Built status |
 |-----|--------|-------------|--------------|
-| 🪣  **Game** | Always available | Options for the stats, partially a debug menu for now | Not Built |
-| 🏆  **Player Stats** | Always available | A plain text view of all the player stats for future debugging | Not Built |
+| 🪣  **Game** | Always available | Options for the stats, partially a debug menu for now | Built |
+| 🏆  **Player Stats** | Always available | A plain text view of all the player stats for future debugging | Built |
 | 🔧 **Options** | Always available | A proper options or moore standard settings page | Not Built |
 
  - More tabs to come in future
