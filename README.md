@@ -173,6 +173,7 @@ Start: Empty tank of RO water at room temperature
 - [ ] Water change cooldown notification shows total cooldown, not time remaining
 - [ ] Settings page does not continue counting while the player is checking it
 - [ ] In settings the scroll aaction clips into the tabs
+- [ ] Potential bug if the fish tier is misspelt or changed from outside the enum it defaults to nano, could hide typos or cause headache in future updates
 ---
  
 ## 🙏 Inspired By
