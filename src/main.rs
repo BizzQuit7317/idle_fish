@@ -14,6 +14,8 @@ mod ui_helper;
 mod settings;
 mod economy;
 mod offline_report;
+mod lights;
+mod algea;
 
 use macroquad::prelude::*;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -251,6 +253,13 @@ async fn main() {
                         },
                         hud::hudAction::DebugShiftStatNegative => {
                             gs.debugger.stat_change_direction = false;
+                        },
+                        hud::hudAction::TestToggleLight => {
+                            if gs.tank.lighting.on {
+                                gs.tank.lighting.on = false;
+                            } else {
+                                gs.tank.lighting.on = true;
+                            }
                         },
                         hud::hudAction::None => {}
                     }

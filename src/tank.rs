@@ -3,6 +3,8 @@ use serde::{Serialize, Deserialize};
 use crate::fish;
 use crate::traits;
 use crate::constants;
+use crate::lights;
+use crate::algea;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub enum WaterParameter {
@@ -83,9 +85,14 @@ pub struct Tank {
     pub ideal_parameters: fish::Tolerances,
     pub water_change_cooldown: f32,
 
+    pub algea_colony: algea::Algea,
+
     //define fish stats
     pub max_fish: u8,
     pub fish: Vec<fish::Fish>,
+
+    //Components in tank
+    pub lighting: lights::Light,
 }
 
 impl Tank {
@@ -102,6 +109,8 @@ impl Tank {
             },
             water_change_cooldown: 0.0,
 
+            algea_colony: algea::Algea::new(),
+
             //define fish statsnew
             max_fish: 3,
             fish: vec![
@@ -109,6 +118,7 @@ impl Tank {
                 //fish::Fish::new(),
                 //fish::Fish::new(),
             ],
+            lighting: lights::Light::new(),
         }
     }
 
@@ -142,23 +152,23 @@ impl Tank {
             self.ideal_parameters.nitrite_range = fish::ParameterRange::new(0.0, 0.0);
             self.ideal_parameters.ammonia_range = fish::ParameterRange::new(0.0, 0.0);
         } else {
-            let mut new_min_temp = f64::MIN;
-            let mut new_max_temp = f64::MAX;
+            let mut new_min_temp = f64::MAX;
+            let mut new_max_temp = f64::MIN;
 
-            let mut new_min_ph = f64::MIN;
-            let mut new_max_ph = f64::MAX;
+            let mut new_min_ph = f64::MAX;
+            let mut new_max_ph = f64::MIN;
 
-            let mut new_min_gh = f64::MIN;
-            let mut new_max_gh = f64::MAX;
+            let mut new_min_gh = f64::MAX;
+            let mut new_max_gh = f64::MIN;
 
-            let mut new_min_nitrate = f64::MIN;
-            let mut new_max_nitrate = f64::MAX;
+            let mut new_min_nitrate = f64::MAX;
+            let mut new_max_nitrate = f64::MIN;
 
-            let mut new_min_nitrite = f64::MIN;
-            let mut new_max_nitrite = f64::MAX;
+            let mut new_min_nitrite = f64::MAX;
+            let mut new_max_nitrite = f64::MIN;
 
-            let mut new_min_ammonia = f64::MIN;
-            let mut new_max_ammonia = f64::MAX;
+            let mut new_min_ammonia = f64::MAX;
+            let mut new_max_ammonia = f64::MIN;
 
             for fish in &self.fish {
                 //println!("[DBG] Tolerances: {:.5?}", fish.tolerances);

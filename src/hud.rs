@@ -26,6 +26,7 @@ pub enum hudAction {
     DebugShiftStatLeft,
     DebugShiftStatPositive,
     DebugShiftStatNegative,
+    TestToggleLight,
     None,
 }
 
@@ -100,7 +101,11 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
 
     //Add Tank Area where fish can swim
     ui::draw_tank(sw * 0.25, sh * 0.125, sw * con::TANK_WIDTH, sh * con::TANK_HEIGHT);
-
+    //Add shadow for when light are off
+    if !gameState.tank.lighting.on {
+        ui::draw_button_box(sw * 0.25, sh * 0.125, sw * con::TANK_WIDTH, sh * con::TANK_HEIGHT, Color::from_rgba(0, 0, 0, 50), "", BLACK);
+    }
+    
     //Add bottom areas and tab and stats box
     draw_rectangle_lines(0.0, sh * 0.6, sw, sh * con::BOTTOM_AREA_HEIGHT, 5.0, con::AREA_BORDER_COLOUR);
     draw_rectangle_lines(0.0, sh * 0.6, sw, sh * con::BOTTOM_TAB_AREA_HEIGHT, 5.0, con::AREA_BORDER_COLOUR);
@@ -265,6 +270,13 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
                 Color::from_rgba(192, 192, 192, 255), "Change 1 Stat", BLACK) {
                 return hudAction::TestChangeStat(selected_param, gameState.debugger.stat_change_direction);
             }
+
+            //test to toggle lights
+            if ui::draw_button_box(sw * 0.025, sh * 0.78, sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT,
+                Color::from_rgba(192, 192, 192, 255), "toggle light", BLACK) {
+                return hudAction::TestToggleLight;
+            }
+            
         },
     }
 
