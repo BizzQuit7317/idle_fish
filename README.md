@@ -158,8 +158,8 @@ Start: Empty tank of RO water at room temperature
 ### 🔧 In Progress Main
 - [ ] Build Debugger/Cheats page in settings
 - [ ] Balance numbers
-- [ ] Add light cycle into game
-- [ ] Add Algea system into game
+- [ ] Add light cycle into game expand exisiting struct
+- [ ] Add Algea system into game expand exisiting struct
 ### 🔧 In Progress Side/Later
 - [ ] Per-species age rates (`age_rate` marker)
 - [ ] Offline time limit + proper offline report popup
