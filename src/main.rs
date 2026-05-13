@@ -265,7 +265,8 @@ async fn main() {
             },
             ui_helper::GamePage::Settings => {
                 clear_background(BLUE);
-                match settings::draw_settings_menu(&last_page, &mut setting_state, current_settings_tab) {
+
+                match settings::draw_settings_menu(&last_page, &mut setting_state, current_settings_tab, game_state.as_ref()) {
                     settings::settingChoice::MainMenu => {
                         current_page = ui_helper::GamePage::MainMenu;
                     },
@@ -280,8 +281,6 @@ async fn main() {
                     }, 
                     settings::settingChoice::None => {},
                 }
-
-                //debug::draw_debug_grid();
             }
         }
 
