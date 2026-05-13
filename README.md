@@ -171,6 +171,7 @@ Start: Empty tank of RO water at room temperature
 - [ ] Store has a long initial load
 - [ ] `file_control` panics and crashes if save file is missing
 - [ ] Water change cooldown notification shows total cooldown, not time remaining
+- [ ] Settings page does not continue counting while the player is checking it
 ---
  
 ## 🙏 Inspired By
