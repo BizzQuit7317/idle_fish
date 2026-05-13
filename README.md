@@ -168,7 +168,8 @@ Start: Empty tank of RO water at room temperature
 ### 🔧 In Progress QoL
 - [ ] Nicer notification pop-ups
 - [ ] Food drop animation
-- [ ] Move all flat file struct in rust into dirss for more visual clarity
+- [ ] Move all flat file struct in rust into dirs for more visual clarity
+- [ ] Shift all magic numbers from ui layout into constants to keep track better
 ### 🐛 Known Bugs
 - [ ] Tab click causes all later-loaded elements to flash briefly
 - [ ] Store has a long initial load
