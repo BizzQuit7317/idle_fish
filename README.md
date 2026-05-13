@@ -156,6 +156,7 @@ Start: Empty tank of RO water at room temperature
 ## 📋 Roadmap
  
 ### 🔧 In Progress Main
+- [ ] game_state.rs ln 105 need too rework the alge/light relationship
 - [ ] Build Debugger/Cheats page in settings
 - [ ] Balance numbers
 - [ ] Add light cycle into game expand exisiting struct
