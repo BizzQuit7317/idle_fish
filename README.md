@@ -166,6 +166,7 @@ Start: Empty tank of RO water at room temperature
 - [ ] Offline time limit + proper offline report popup
 - [ ] More fish species
 - [ ] More robust prestige calculation per fish
+- [ ] Overfeeding should cause ammonia build up
 ### 🔧 In Progress QoL
 - [ ] Nicer notification pop-ups
 - [ ] Food drop animation
