@@ -10,7 +10,7 @@
         { "trait_name": "GHBoost", "multiplier": 1.02, "weight": 1.0 }
       ],
       "modifiers": [
-        { "parameter": "nitrate", "modifier": -0.05 }
+        { "parameter": "nitrate", "modifier": -0.1 }
       ],
       "base_prestige": 1.0,
       "base_cost": 25.0,
@@ -33,7 +33,7 @@
         { "trait_name": "PHBoost", "multiplier": 1.01, "weight": 1.0 }
       ],
       "modifiers": [
-        { "parameter": "ammonia", "modifier": -0.03 }
+        { "parameter": "ammonia", "modifier": -0.1 }
       ],
       "base_prestige": 1.0,
       "base_cost": 25.0,
@@ -56,7 +56,7 @@
         { "trait_name": "NitrateBoost", "multiplier": 0.98, "weight": 1.0 }
       ],
       "modifiers": [
-        { "parameter": "ph", "modifier": 0.02 }
+        { "parameter": "ph", "modifier": 0.1 }
       ],
       "base_prestige": 1.0,
       "base_cost": 25.0,
@@ -79,7 +79,7 @@
         { "trait_name": "NitriteBoost", "multiplier": 0.98, "weight": 1.0 }
       ],
       "modifiers": [
-        { "parameter": "nitrite", "modifier": -0.04 }
+        { "parameter": "nitrite", "modifier": -0.1 }
       ],
       "base_prestige": 1.0,
       "base_cost": 25.0,
