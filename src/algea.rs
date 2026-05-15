@@ -1,5 +1,7 @@
 use serde::{Serialize, Deserialize};
 
+use crate::lights;
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Algea {
     pub light_levels: f64,
@@ -16,5 +18,10 @@ impl Algea {
             surface_area: 0.0,
             coverge: 0.0,
         }
+    }
+
+    pub fn grow(&mut self, lighting: lights::Light) {
+        //self.tank.algea_colony.light_levels += self.tank.lighting.intensity;
+        self.light_levels += lighting.intensity
     }
 }

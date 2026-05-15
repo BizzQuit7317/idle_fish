@@ -88,6 +88,13 @@ impl GameState {
         self.tank.ph_drift();
         self.tank.gh_depletion(); //Fih eating away at the minerals in the water
 
+        //Algea only gains light when its on
+        if self.tank.lighting.on {
+            self.tank.algea_colony.grow(self.tank.lighting);
+        }
+
+        println!("[DBG]current algea light levels: {}", self.tank.algea_colony.light_levels);
+
         self.tank.parameter_clamp(); //Finally clamp all parameters to nt go beyond limits
 
         //take a snapshoot of list len before removeing fish for tracking fish deaths, MUST ADD FISH BEFORE THIS CHECK
@@ -101,13 +108,6 @@ impl GameState {
         //check the players total fish here to account for all the removed fish
         self.player.current_fish_owned = self.tank.fish.len() as u32;
         self.player.total_fish_died += pre_death_fish_len - self.player.current_fish_owned;
-
-        //Algeaa only gains light when its on
-        if self.tank.lighting.on {
-            self.tank.algea_colony.light_levels += 1.0;
-        }
-
-        println!("[DBG]current algea light levels: {}", self.tank.algea_colony.light_levels);
 
         //println!("[DBG] Player pretige points {} Tank parameters {:?} the player has {} fish currently and {} dead fish overall\n###################", &self.player.current_prestige, &self.tank.water_parameters, &self.player.current_fish_owned, &self.player.total_fish_died); //only here for debugging to see each tank
     }

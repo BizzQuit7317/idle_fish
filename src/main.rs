@@ -255,10 +255,16 @@ async fn main() {
                             gs.debugger.stat_change_direction = false;
                         },
                         hud::hudAction::TestToggleLight => {
-                            if gs.tank.lighting.on {
-                                gs.tank.lighting.on = false;
+                            //Only need to count a toggle when the witch is turned on
+                            if gs.tank.lighting.toggles_used < gs.tank.lighting.max_toggles {
+                                if gs.tank.lighting.on {
+                                    gs.tank.lighting.on = false;
+                                } else {
+                                    gs.tank.lighting.toggles_used += 1;
+                                    gs.tank.lighting.on = true;
+                                }
                             } else {
-                                gs.tank.lighting.on = true;
+                               gs.notification.set("Run out of switch toggles", 3.0) 
                             }
                         },
                         hud::hudAction::None => {}
