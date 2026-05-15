@@ -103,6 +103,7 @@ async fn main() {
                 if let Some(gs) = &mut game_state {
                     gs.notification.tick(get_frame_time());
                     gs.tank.tick_cooldown(get_frame_time());
+                    gs.tank.lighting.tick_cooldown(get_frame_time());
                 }
 
                 clear_background(DARKGREEN);
@@ -256,13 +257,10 @@ async fn main() {
                         },
                         hud::hudAction::TestToggleLight => {
                             //Only need to count a toggle when the witch is turned on
-                            if gs.tank.lighting.toggles_used < gs.tank.lighting.max_toggles {
-                                if gs.tank.lighting.on {
-                                    gs.tank.lighting.on = false;
-                                } else {
-                                    gs.tank.lighting.toggles_used += 1;
-                                    gs.tank.lighting.on = true;
-                                }
+                            if gs.tank.lighting.can_turn_on() {
+                                gs.tank.lighting.cooldown = gs.tank.lighting.on_period;
+                                gs.tank.lighting.on = true;
+                                gs.tank.lighting.toggles_used += 1;
                             } else {
                                gs.notification.set("Run out of switch toggles", 3.0) 
                             }

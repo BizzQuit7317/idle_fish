@@ -18,6 +18,8 @@ pub struct Light {
     pub toggles_used: u8, //Track how many timess the sswitch has been used
     pub intensity: f64, //The  number used to dictate how much light energy is pssed to other functions
     pub spectrum: Spectrum,
+    pub on_period: f32, //Keep track of how lonog the lights stay on for
+    pub cooldown: f32, //The cooldown timer
 }
 
 impl Light {
@@ -28,6 +30,22 @@ impl Light {
             toggles_used: 0,
             intensity: 1.0, //NEED TO ALTER/BALANCE!!!
             spectrum: Spectrum::Full,
+            on_period: 3.0, //keeps lights on for 10 seconds
+            cooldown: 0.0,
         }
     }
+
+    pub fn can_turn_on(&self) -> bool {
+        //gs.tank.lighting.toggles_used < gs.tank.lighting.max_toggles  && gs.tank.lighting.on_period
+        self.cooldown <= 0.0 && self.toggles_used < self.max_toggles
+    }
+
+    pub fn tick_cooldown(&mut self, delta: f32) {
+        if self.cooldown > 0.0 {
+            self.cooldown -= delta;
+        } else {
+            self.on = false; //Lock the light to off unless the cooldown has been triggered by the switch
+        }
+    }
+
 }
