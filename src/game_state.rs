@@ -93,7 +93,7 @@ impl GameState {
             self.tank.algea_colony.grow(self.tank.lighting);
         }
 
-        println!("[DBG]current algea light levels: {}", self.tank.algea_colony.light_levels);
+        //println!("[DBG]current algea light levels: {}", self.tank.algea_colony.light_levels);
 
         self.tank.parameter_clamp(); //Finally clamp all parameters to nt go beyond limits
 

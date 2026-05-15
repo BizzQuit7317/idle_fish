@@ -89,6 +89,9 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
     //Draw the prestige amount
     ui::draw_centered_text_box(sw * 0.5, sh * 0.025 + (sh * con::PRESTIGE_BOX_SCALE_HEIGHT * 0.5), sw * con::PRESTIGE_BOX_SCALE_WIDTH, sh * con::PRESTIGE_BOX_SCALE_HEIGHT, Color::from_rgba(0, 0, 128, 255), &format!("Prestige: {:.2}", gameState.player.current_prestige), WHITE);
 
+    //Draw the Players Rank
+    ui::draw_text_box(sw * 0.60, sh * 0.025, sw * con::STAT_WIDTH, sh * con::STAT_HEIGHT, BLACK, &format!("Rank: {}", gameState.player.rank), WHITE);
+
     //Draw the settings button
     if ui::draw_button_box(sw * 0.975 - (sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH), sh * 0.025 , sw * con::SETTING_BUTTON_BOX_SCALE_WIDTH, sh * con::SETTING_BUTTON_BOX_SCALE_HEIGHT, Color::from_rgba(192, 192, 192, 255), "Settings", BLACK) {
         return hudAction::Settings;
