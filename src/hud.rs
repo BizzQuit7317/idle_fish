@@ -236,6 +236,8 @@ pub fn draw_main_hud(gameState: &game_state::GameState, active_tab: &BottomTab) 
     // TANK — unchanged position/size, just retained
     // =====================================================================
     ui::draw_tank(sw * 0.25, sh * 0.125, sw * con::TANK_WIDTH, sh * con::TANK_HEIGHT);
+    //Add Algea bloom visual
+    
     //Add shadow for when light are off
     if !gameState.tank.lighting.on {
         ui::draw_button_box(sw * 0.25, sh * 0.125, sw * con::TANK_WIDTH, sh * con::TANK_HEIGHT,
