@@ -5,17 +5,19 @@ mod traits;
 mod constants;
 mod player;
 mod registry;
-mod hud;
-mod menu;
+//mod hud;
+//mod menu;
 mod sprites;
 mod file_control;
 mod debug;
 mod ui_helper;
-mod settings;
+//mod settings;
 mod economy;
 mod offline_report;
 mod lights;
 mod algea;
+
+mod screens;
 
 use macroquad::prelude::*;
 use std::time::{SystemTime, UNIX_EPOCH};
@@ -39,15 +41,15 @@ async fn main() {
     let mut current_page = ui_helper::GamePage::MainMenu;
     let mut last_page = ui_helper::GamePage::MainMenu;
     let mut tick_timer = 0.0f32; //control the frame speed
-    let mut current_tab = &hud::BottomTab::FishStats; //set FishStats as the dedfault tab for now
-    let mut setting_state = settings::SettingsState::new();
-    let mut current_settings_tab = &settings::SettingTab::Game; //set Game tab as the default
+    let mut current_tab = &screens::hud::BottomTab::FishStats; //set FishStats as the dedfault tab for now
+    let mut setting_state = screens::settings::SettingsState::new();
+    let mut current_settings_tab = &screens::settings::SettingTab::Game; //set Game tab as the default
 
     loop {
         match current_page {
             ui_helper::GamePage::MainMenu => {
-                match menu::draw_main_menu() {
-                    menu::MenuChoice::NewGame => {
+                match screens::menu::draw_main_menu() {
+                    screens::menu::MenuChoice::NewGame => {
                         game_state = Some(game_state::GameState::new());
                         if let Some(gs) = &mut game_state {
                             gs.tank.apply_traits();
@@ -59,7 +61,7 @@ async fn main() {
                         }
                         current_page = ui_helper::GamePage::Game;
                     },
-                    menu::MenuChoice::Continue => {
+                    screens::menu::MenuChoice::Continue => {
                         game_state = Some(file_control::load_game_json());
                         if let Some(gs) = &mut game_state {
                             let now = SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards...").as_secs();
@@ -84,10 +86,10 @@ async fn main() {
                         }
                         current_page = ui_helper::GamePage::Game;
                     },
-                    menu::MenuChoice::Settings => {
+                    screens::menu::MenuChoice::Settings => {
                             current_page = ui_helper::GamePage::Settings;
                         },
-                    menu::MenuChoice::None => {}
+                    screens::menu::MenuChoice::None => {}
                 }
             },
             ui_helper::GamePage::Game => {
@@ -109,13 +111,13 @@ async fn main() {
                 clear_background(DARKGREEN);
                 
                 if let Some(gs) = &mut game_state {
-                    match hud::draw_main_hud(gs, current_tab) {
-                        hud::hudAction::FeedFish => {
+                    match screens::hud::draw_main_hud(gs, current_tab) {
+                        screens::hud::hudAction::FeedFish => {
                             for fish in &mut gs.tank.fish {
                                 fish.eat(gs.player.current_food_level);
                             }
                         },
-                        hud::hudAction::AddFish(index) => {
+                        screens::hud::hudAction::AddFish(index) => {
                             if let Some(species) = gs.fish_registry.fish.get(index) {
                                 if gs.tank.fish.len() < gs.tank.max_fish as usize {
                                     if gs.economy.can_afford(gs.player.current_prestige, species) {
@@ -138,7 +140,7 @@ async fn main() {
                                 //tank_sprites.sync(gs.tank.fish.len());
                             }
                         },
-                        hud::hudAction::TestAddFish(index) => {
+                        screens::hud::hudAction::TestAddFish(index) => {
                             //same as above except no cost
                             if let Some(species) = gs.fish_registry.fish.get(index) {
                                 if gs.tank.fish.len() < gs.tank.max_fish as usize {
@@ -155,60 +157,60 @@ async fn main() {
                                 //tank_sprites.sync(gs.tank.fish.len());
                             }
                         },
-                        hud::hudAction::BuyFood => {
+                        screens::hud::hudAction::BuyFood => {
                             gs.player.current_food_level += 1.0;
                             if gs.player.current_food_level > gs.player.highest_food_level {
                                 gs.player.highest_food_level = gs.player.current_food_level; //update the highesst food level reached
                             }
                         }
-                        hud::hudAction::AddPrestige => {
+                        screens::hud::hudAction::AddPrestige => {
                             gs.player.current_prestige += 1000.0;
                         },
-                        hud::hudAction::Save => {
+                        screens::hud::hudAction::Save => {
                             file_control::save_game_json(gs);
                             gs.player.last_save_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards...").as_secs();
                         },
-                        hud::hudAction::Settings => {
+                        screens::hud::hudAction::Settings => {
                             current_page = ui_helper::GamePage::Settings;
                         },
-                        hud::hudAction::FishStats => {
-                            current_tab = &hud::BottomTab::FishStats;
+                        screens::hud::hudAction::FishStats => {
+                            current_tab = &screens::hud::BottomTab::FishStats;
                         },
-                        hud::hudAction::Store => {
-                            current_tab = &hud::BottomTab::Store;
+                        screens::hud::hudAction::Store => {
+                            current_tab = &screens::hud::BottomTab::Store;
                         },
-                        hud::hudAction::Testing => {
-                            current_tab = &hud::BottomTab::Testing;
+                        screens::hud::hudAction::Testing => {
+                            current_tab = &screens::hud::BottomTab::Testing;
                         },
                         
-                        hud::hudAction::BuyTankCap => {
+                        screens::hud::hudAction::BuyTankCap => {
                             gs.player.tank_cap_level += 1.0;
                             if gs.player.tank_cap_level > gs.player.highest_tank_cap_level {
                                 gs.player.highest_tank_cap_level = gs.player.tank_cap_level;
                             }
                             gs.tank.max_fish += 1;
                         },
-                        hud::hudAction::DebugIndexIncrease => {
+                        screens::hud::hudAction::DebugIndexIncrease => {
                             let max = gs.fish_registry.fish.len() - 1;
                             gs.debugger.current_fish_debug_index = (gs.debugger.current_fish_debug_index + 1).min(max);
                         },
-                        hud::hudAction::DebugIndexDecrease => {
+                        screens::hud::hudAction::DebugIndexDecrease => {
                             if gs.debugger.current_fish_debug_index > 0 {
                                 gs.debugger.current_fish_debug_index -= 1;
                             }
                         },
-                        hud::hudAction::StoreScrollUp => {
+                        screens::hud::hudAction::StoreScrollUp => {
                             if gs.debugger.store_scroll_offset > 0 {
                                 gs.debugger.store_scroll_offset -= 1;
                             }
                         },
-                        hud::hudAction::StoreScrollDown => {
+                        screens::hud::hudAction::StoreScrollDown => {
                             let max_scroll = (gs.fish_registry.fish.len() / 3).saturating_sub(1);
                             if gs.debugger.store_scroll_offset < max_scroll {
                                 gs.debugger.store_scroll_offset += 1;
                             }
                         },
-                        hud::hudAction::ChangeWater => {
+                        screens::hud::hudAction::ChangeWater => {
                             if gs.tank.can_change_water() {
                                 gs.tank.water_change(gs.player.water_change_percent, gs.player.water_change_cooldown);
                                 gs.notification.set("Water change complete!", 2.0);
@@ -216,7 +218,7 @@ async fn main() {
                                 gs.notification.set(&format!("Water change on cooldown {} seconds", gs.player.water_change_cooldown), 2.0);
                             }
                         },
-                        hud::hudAction::TestChangeStat(stat, direction) => {
+                        screens::hud::hudAction::TestChangeStat(stat, direction) => {
                             if direction {
                                 match stat {
                                     tank::WaterParameter::temprature => {gs.tank.water_parameters.temprature += 1.0},
@@ -238,24 +240,24 @@ async fn main() {
                             }
                             
                         },
-                        hud::hudAction::DebugShiftStatLeft => {
+                        screens::hud::hudAction::DebugShiftStatLeft => {
                             if gs.debugger.current_stat_debug_index == 0 {
                                 gs.debugger.current_stat_debug_index = tank::WaterParameter::ALL.len() - 1;
                             } else {
                                 gs.debugger.current_stat_debug_index -= 1;
                             }
                         },
-                        hud::hudAction::DebugShiftStatRight => {
+                        screens::hud::hudAction::DebugShiftStatRight => {
                             gs.debugger.current_stat_debug_index = 
                                 (gs.debugger.current_stat_debug_index + 1) % tank::WaterParameter::ALL.len();
                         },
-                        hud::hudAction::DebugShiftStatPositive => {
+                        screens::hud::hudAction::DebugShiftStatPositive => {
                             gs.debugger.stat_change_direction = true;
                         },
-                        hud::hudAction::DebugShiftStatNegative => {
+                        screens::hud::hudAction::DebugShiftStatNegative => {
                             gs.debugger.stat_change_direction = false;
                         },
-                        hud::hudAction::TestToggleLight => {
+                        screens::hud::hudAction::TestToggleLight => {
                             //Only need to count a toggle when the witch is turned on
                             if gs.tank.lighting.can_turn_on() {
                                 gs.tank.lighting.cooldown = gs.tank.lighting.on_period;
@@ -265,7 +267,7 @@ async fn main() {
                                gs.notification.set("Run out of switch toggles", 3.0) 
                             }
                         },
-                        hud::hudAction::None => {}
+                        screens::hud::hudAction::None => {}
                     }
 
                     tank_sprites.sync(gs.tank.fish.len());
@@ -279,20 +281,20 @@ async fn main() {
             ui_helper::GamePage::Settings => {
                 clear_background(BLUE);
 
-                match settings::draw_settings_menu(&last_page, &mut setting_state, current_settings_tab, game_state.as_ref()) {
-                    settings::settingChoice::MainMenu => {
+                match screens::settings::draw_settings_menu(&last_page, &mut setting_state, current_settings_tab, game_state.as_ref()) {
+                    screens::settings::settingChoice::MainMenu => {
                         current_page = ui_helper::GamePage::MainMenu;
                     },
-                    settings::settingChoice::GameMenu => {
+                    screens::settings::settingChoice::GameMenu => {
                         current_page = ui_helper::GamePage::Game;
                     },
-                    settings::settingChoice::Game => {
-                        current_settings_tab = &settings::SettingTab::Game;
+                    screens::settings::settingChoice::Game => {
+                        current_settings_tab = &screens::settings::SettingTab::Game;
                     },
-                    settings::settingChoice::PlayerStats => {
-                        current_settings_tab = &settings::SettingTab::PlayerStats;
+                    screens::settings::settingChoice::PlayerStats => {
+                        current_settings_tab = &screens::settings::SettingTab::PlayerStats;
                     }, 
-                    settings::settingChoice::None => {},
+                    screens::settings::settingChoice::None => {},
                 }
             }
         }
