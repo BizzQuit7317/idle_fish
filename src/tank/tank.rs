@@ -1,0 +1,313 @@
+use serde::{Serialize, Deserialize}; 
+
+use crate::tank;
+//use crate::fish;
+//use crate::traits;
+use crate::game_data;
+use crate::components;
+//use crate::algea;
+
+#[derive(Debug, Serialize, Deserialize, Clone, Copy)]
+pub enum WaterParameter {
+    temprature,
+    ph,
+    gh,
+    nitrate,
+    nitrite,
+    ammonia,
+}
+
+impl WaterParameter {
+    pub const ALL: [WaterParameter; 6] = [
+        WaterParameter::temprature,
+        WaterParameter::ph,
+        WaterParameter::gh,
+        WaterParameter::nitrate,
+        WaterParameter::nitrite,
+        WaterParameter::ammonia,
+    ];
+}
+
+impl WaterParameter {
+    pub fn from_str(s: &str) -> WaterParameter {
+        match s {
+            "temperature" => WaterParameter::temprature,
+            "ph" => WaterParameter::ph,
+            "gh" => WaterParameter::gh,
+            "nitrate" => WaterParameter::nitrate,
+            "nitrite" => WaterParameter::nitrite,
+            "ammonia" => WaterParameter::ammonia,
+            _ => panic!("Unknown water parameter: {}", s), // panic here is fine, means your json is wrong
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct WaterParameters {
+    pub temprature: f64,
+    pub ph: f64,
+    pub gh: f64,
+    pub nitrate: f64,
+    pub nitrite: f64,
+    pub ammonia: f64,
+}
+
+impl WaterParameters {
+    pub fn new() -> WaterParameters {
+        /*
+            Should be set to RO water by default on a new instance
+        */
+        WaterParameters {
+            temprature: game_data::constants::TAP_WATER_TEMPRATURE,
+            ph: game_data::constants::TAP_WATER_PH,
+            gh: game_data::constants::TAP_WATER_GH,
+            nitrate: game_data::constants::TAP_WATER_NITRATE,
+            nitrite: game_data::constants::TAP_WATER_NITRITE,
+            ammonia: game_data::constants::TAP_WATER_AMMONIA,
+        }
+    }
+
+    pub fn apply_changes(&mut self, parameter: &WaterParameter, value: f64) {
+        match parameter {
+            WaterParameter::temprature => self.temprature += value,
+            WaterParameter::ph => self.ph += value,
+            WaterParameter::gh => self.gh += value,
+            WaterParameter::nitrate => self.nitrate += value,
+            WaterParameter::nitrite => self.nitrite += value,
+            WaterParameter::ammonia => self.ammonia += value,
+        }
+    }
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct Tank {
+    //define the water parameterss
+    pub water_parameters: WaterParameters,
+    pub ideal_parameters: tank::fish::Tolerances,
+    pub water_change_cooldown: f32,
+
+    pub algea_colony: tank::algea::Algea,
+
+    //define fish stats
+    pub max_fish: u8,
+    pub fish: Vec<tank::fish::Fish>,
+
+    //Components in tank
+    pub lighting: components::lights::Light,
+}
+
+impl Tank {
+    pub fn new() -> Tank {
+        Tank{
+            water_parameters: WaterParameters::new(),
+            ideal_parameters: tank::fish::Tolerances {
+                temprature_range: tank::fish::ParameterRange::new(18.0, 28.0),   // full viable fish range in celsius
+                ph_range: tank::fish::ParameterRange::new(0.0, 14.0),           // full pH scale
+                gh_range: tank::fish::ParameterRange::new(8.0, 20.0),           // 0 (RO) to very hard
+                nitrate_range: tank::fish::ParameterRange::new(0.0, 30.0),     // 0 to dangerously high
+                nitrite_range: tank::fish::ParameterRange::new(0.0, 0.5),       // anything above 5 is lethal for most fish
+                ammonia_range: tank::fish::ParameterRange::new(0.0, 0.25),       // same as nitrite
+            },
+            water_change_cooldown: 0.0,
+
+            algea_colony: tank::algea::Algea::new(),
+
+            //define fish statsnew
+            max_fish: 3,
+            fish: vec![
+                //tank::fish::Fish::new(),
+                //tank::fish::Fish::new(),
+                //tank::fish::Fish::new(),
+            ],
+            lighting: components::lights::Light::new(),
+        }
+    }
+
+    pub fn check_fish(&mut self) -> bool {
+        let before = self.fish.len();
+        self.fish.retain(|fish| fish.alive);
+        self.fish.len() != before  // returns true if anything was removed
+    }
+
+    pub fn apply_traits(&mut self) {
+        for fish in &self.fish {
+            for fish_trait in &fish.fish_traits {
+                match fish_trait.trait_name {
+                    tank::traits::TraitNames::TempratureBoost => self.water_parameters.temprature *= fish_trait.multiplier,
+                    tank::traits::TraitNames::AmmoniaBoost => self.water_parameters.ammonia *= fish_trait.multiplier,
+                    tank::traits::TraitNames::PHBoost => self.water_parameters.ph *= fish_trait.multiplier,
+                    tank::traits::TraitNames::GHBoost => self.water_parameters.gh *= fish_trait.multiplier,
+                    tank::traits::TraitNames::NitrateBoost => self.water_parameters.nitrate *= fish_trait.multiplier,
+                    tank::traits::TraitNames::NitriteBoost => self.water_parameters.nitrite *= fish_trait.multiplier,
+                }
+            }
+        }
+    }
+    
+    pub fn update_ideal_parameters(&mut self) {
+        if self.fish.is_empty() {
+            self.ideal_parameters.temprature_range = tank::fish::ParameterRange::new(0.0, 40.0);
+            self.ideal_parameters.ph_range = tank::fish::ParameterRange::new(7.0, 7.0);      // neutral
+            self.ideal_parameters.gh_range = tank::fish::ParameterRange::new(0.0, 0.0);      // RO = 0 hardness
+            self.ideal_parameters.nitrate_range = tank::fish::ParameterRange::new(0.0, 0.0);
+            self.ideal_parameters.nitrite_range = tank::fish::ParameterRange::new(0.0, 0.0);
+            self.ideal_parameters.ammonia_range = tank::fish::ParameterRange::new(0.0, 0.0);
+        } else {
+            let mut new_min_temp = f64::MAX;
+            let mut new_max_temp = f64::MIN;
+
+            let mut new_min_ph = f64::MAX;
+            let mut new_max_ph = f64::MIN;
+
+            let mut new_min_gh = f64::MAX;
+            let mut new_max_gh = f64::MIN;
+
+            let mut new_min_nitrate = f64::MAX;
+            let mut new_max_nitrate = f64::MIN;
+
+            let mut new_min_nitrite = f64::MAX;
+            let mut new_max_nitrite = f64::MIN;
+
+            let mut new_min_ammonia = f64::MAX;
+            let mut new_max_ammonia = f64::MIN;
+
+            for fish in &self.fish {
+                //println!("[DBG] Tolerances: {:.5?}", fish.tolerances);
+                new_min_temp = new_min_temp.min(fish.tolerances.temprature_range.min);
+                new_max_temp = new_max_temp.max(fish.tolerances.temprature_range.max);
+
+                new_min_ph = new_min_ph.min(fish.tolerances.ph_range.min);
+                new_max_ph = new_max_ph.max(fish.tolerances.ph_range.max);
+
+                new_min_gh = new_min_gh.min(fish.tolerances.gh_range.min);
+                new_max_gh = new_max_gh.max(fish.tolerances.gh_range.max);
+
+                new_min_nitrate = new_min_nitrate.min(fish.tolerances.nitrate_range.min);
+                new_max_nitrate = new_max_nitrate.max(fish.tolerances.nitrate_range.max);
+
+                new_min_nitrite = new_min_nitrite.min(fish.tolerances.nitrite_range.min);
+                new_max_nitrite = new_max_nitrite.max(fish.tolerances.nitrite_range.max);
+
+                new_min_ammonia = new_min_ammonia.min(fish.tolerances.ammonia_range.min);
+                new_max_ammonia = new_max_ammonia.max(fish.tolerances.ammonia_range.max);
+
+            }
+
+            self.ideal_parameters.temprature_range.min = new_min_temp;
+            self.ideal_parameters.temprature_range.max = new_max_temp;
+
+            self.ideal_parameters.ph_range.min = new_min_ph;
+            self.ideal_parameters.ph_range.max = new_max_ph;
+
+            self.ideal_parameters.gh_range.min = new_min_gh;
+            self.ideal_parameters.gh_range.max = new_max_gh;
+
+            self.ideal_parameters.nitrate_range.min = new_min_nitrate;
+            self.ideal_parameters.nitrate_range.max = new_max_nitrate;
+
+            self.ideal_parameters.nitrite_range.min = new_min_nitrite;
+            self.ideal_parameters.nitrite_range.max = new_max_nitrite;
+
+            self.ideal_parameters.ammonia_range.min = new_min_ammonia;
+            self.ideal_parameters.ammonia_range.max = new_max_ammonia;
+        }
+        
+    }
+
+    pub fn parameter_clamp(&mut self) {
+        self.water_parameters.ph = self.water_parameters.ph.clamp(0.0, 14.0);
+        self.water_parameters.gh = self.water_parameters.gh.max(0.0);
+        self.water_parameters.ammonia = self.water_parameters.ammonia.max(0.0);
+        self.water_parameters.nitrite = self.water_parameters.nitrite.max(0.0);
+        self.water_parameters.nitrate = self.water_parameters.nitrate.max(0.0);
+    }
+
+    pub fn gh_depletion(&mut self) {
+        self.water_parameters.gh -= 0.01 * self.fish.len() as f64;
+    }
+
+    pub fn ph_drift(&mut self) {
+        let net_acidic_force = self.water_parameters.nitrite + self.water_parameters.nitrate;
+        let net_alkaline_force = self.water_parameters.ammonia;
+        let net_force = (net_alkaline_force - net_acidic_force).abs();
+
+        let raw_drift = net_force * 0.75;
+        let buffered_drift = raw_drift / ( 1.0 + self.water_parameters.gh ); //Add a buffer from the gh, should be kh but were just calling it under general hardness
+        
+        if net_alkaline_force > net_acidic_force {
+            self.water_parameters.ph += buffered_drift;
+        } else {
+            self.water_parameters.ph -= buffered_drift;
+        }
+    }
+
+    pub fn nitrogen_cycle(&mut self) {
+        /*
+            The Nitrogen Cycle, fish produce Ammonia, which slowly decays into Nitrite, which in turn decays into Nitrate, the player then needs 
+            to preform a water change to remove the Nitrate
+        */
+        self.ammonia_increase(); //Update the Ammonia levels first
+        self.convert_nitrite(); //Update the Nitrite next
+        self.convert_nitrate(); //Update the Nitrate next
+
+    }
+
+    pub fn ammonia_increase(&mut self) {
+        for species in &self.fish {
+            match species.tier {
+                tank::fish::FishTier::Nano => {
+                    self.water_parameters.ammonia += 0.1;
+                },
+                tank::fish::FishTier::Community => {
+                    self.water_parameters.ammonia += 0.25;
+                },
+                tank::fish::FishTier::Tropical => {
+                    self.water_parameters.ammonia += 0.4;
+                },
+                tank::fish::FishTier::Predator => {
+                    self.water_parameters.ammonia += 0.65;
+                },
+                tank::fish::FishTier::RiverMonster => {
+                    self.water_parameters.ammonia += 1.0;
+                },
+            }
+        }
+    }
+
+    pub fn convert_nitrite(&mut self) {
+        if self.water_parameters.ammonia > 0.5 {
+            self.water_parameters.ammonia -= 0.08;
+            self.water_parameters.nitrite += 0.08;
+        }
+    }
+
+    pub fn convert_nitrate(&mut self) {
+        if self.water_parameters.nitrite > 0.25 {
+            self.water_parameters.nitrite -= 0.06;
+            self.water_parameters.nitrate += 0.06;
+        }
+    }
+
+    pub fn tick_cooldown(&mut self, delta: f32) {
+        if self.water_change_cooldown > 0.0 {
+            self.water_change_cooldown -= delta;
+        }
+    }
+
+    pub fn can_change_water(&self) -> bool {
+        self.water_change_cooldown <= 0.0
+    }
+
+    pub fn water_change(&mut self, percent_to_change: u32, cooldown: f32) {
+        let change_fraction : f64 = percent_to_change as f64 / 100.0;
+
+        self.water_parameters.temprature = self.water_parameters.temprature * ( 1.0 - change_fraction ) + game_data::constants::TAP_WATER_TEMPRATURE * change_fraction;
+        self.water_parameters.ph = self.water_parameters.ph * ( 1.0 - change_fraction ) + game_data::constants::TAP_WATER_PH * change_fraction;
+        self.water_parameters.gh = self.water_parameters.gh * ( 1.0 - change_fraction ) + game_data::constants::TAP_WATER_GH * change_fraction;
+        self.water_parameters.nitrate = self.water_parameters.nitrate * ( 1.0 - change_fraction ) + game_data::constants::TAP_WATER_NITRATE * change_fraction;
+        self.water_parameters.nitrite = self.water_parameters.nitrite * ( 1.0 - change_fraction ) + game_data::constants::TAP_WATER_NITRITE * change_fraction;
+        self.water_parameters.ammonia = self.water_parameters.ammonia * ( 1.0 - change_fraction ) + game_data::constants::TAP_WATER_AMMONIA * change_fraction;
+
+        self.water_change_cooldown = cooldown;
+    }
+}
