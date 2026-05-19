@@ -4,7 +4,7 @@ use crate::util;
 use crate::game_data;
 use crate::tank;
 
-pub enum hudAction {
+pub enum HudAction {
     FeedFish,
     AddFish(usize),
     TestAddFish(usize),
@@ -62,7 +62,7 @@ fn parameter_colour(value: f64, min: f64, max: f64) -> Color {
     }
 }
 
-pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active_tab: &BottomTab) -> hudAction {
+pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active_tab: &BottomTab) -> HudAction {
     let sw = screen_width();
     let sh = screen_height();
 
@@ -87,13 +87,13 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
     let mut x_cursor = left_pad;
 
     if util::ui_helper::draw_button_box(x_cursor, tb_btn_y, tb_btn_w, tb_btn_h, BUTTON_NEUTRAL, "Save", BLACK) {
-        return hudAction::Save;
+        return HudAction::Save;
     }
     x_cursor += tb_btn_w + sw * 0.01;
 
     if util::ui_helper::draw_button_box(x_cursor, tb_btn_y, tb_btn_w * 1.2, tb_btn_h, BUTTON_DANGER,
         &format!("Water Change {}%", &current_game_state.player.water_change_percent), BLACK) {
-        return hudAction::ChangeWater;
+        return HudAction::ChangeWater;
     }
 
     // -- Right cluster --
@@ -101,14 +101,14 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
     let mut rx_cursor = sw - right_pad - tb_btn_w;
 
     if util::ui_helper::draw_button_box(rx_cursor, tb_btn_y, tb_btn_w, tb_btn_h, BUTTON_NEUTRAL, "Settings", BLACK) {
-        return hudAction::Settings;
+        return HudAction::Settings;
     }
     rx_cursor -= tb_btn_w + sw * 0.01;
 
     // Food button (right-of-center, before settings)
     if util::ui_helper::draw_button_box(rx_cursor, tb_btn_y, tb_btn_w, tb_btn_h, BUTTON_ACTION,
         &format!("Food lvl {}", &current_game_state.player.current_food_level), BLACK) {
-        return hudAction::FeedFish;
+        return HudAction::FeedFish;
     }
 
     // -- Center cluster: Rank badge + Prestige badge --
@@ -279,9 +279,9 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
         let (bg, fg) = if is_active { (TAB_ACTIVE, WHITE) } else { (TAB_INACTIVE, BLACK) };
         if util::ui_helper::draw_button_box(tx, tab_y, tab_w, tab_h, bg, label, fg) {
             return match tab {
-                BottomTab::FishStats => hudAction::FishStats,
-                BottomTab::Store     => hudAction::Store,
-                BottomTab::Testing   => hudAction::Testing,
+                BottomTab::FishStats => HudAction::FishStats,
+                BottomTab::Store     => HudAction::Store,
+                BottomTab::Testing   => HudAction::Testing,
             };
         }
     }
@@ -387,12 +387,12 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
 
             if util::ui_helper::draw_button_box(scroll_btn_x, store_top, scroll_btn_w, scroll_btn_h,
                 BUTTON_NEUTRAL, "^", BLACK) {
-                return hudAction::StoreScrollUp;
+                return HudAction::StoreScrollUp;
             }
             if util::ui_helper::draw_button_box(scroll_btn_x,
                 store_top + visible_rows as f32 * card_h - scroll_btn_h,
                 scroll_btn_w, scroll_btn_h, BUTTON_NEUTRAL, "v", BLACK) {
-                return hudAction::StoreScrollDown;
+                return HudAction::StoreScrollDown;
             }
 
             // Adjust card area to leave room for scroll column
@@ -436,7 +436,7 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
                 let buy_y = y + card_inner_h - buy_h - sh * 0.003;
                 if util::ui_helper::draw_button_box(buy_x, buy_y, buy_w, buy_h,
                     BUTTON_ACTION, "Buy", BLACK) {
-                    return hudAction::AddFish(index);
+                    return HudAction::AddFish(index);
                 }
 
                 draw_rectangle_lines(x, y, adj_card_w, card_inner_h,
@@ -482,7 +482,7 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
                     current_game_state.economy.get_food_cost(current_game_state.player.current_food_level)),
                 BLACK,
             ) {
-                return hudAction::BuyFood;
+                return HudAction::BuyFood;
             }
 
             // Tank cap tile
@@ -504,7 +504,7 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
                     current_game_state.economy.get_tank_cap_cost(current_game_state.player.tank_cap_level)),
                 BLACK,
             ) {
-                return hudAction::BuyTankCap;
+                return HudAction::BuyTankCap;
             }
         },
 
@@ -550,11 +550,11 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
 
             if util::ui_helper::draw_button_box(c1x + sw * 0.005, mid_y,
                 arrow_w, arrow_h, BUTTON_NEUTRAL, "<", BLACK) {
-                return hudAction::DebugIndexDecrease;
+                return HudAction::DebugIndexDecrease;
             }
             if util::ui_helper::draw_button_box(c1x + col_w - arrow_w - sw * 0.005, mid_y,
                 arrow_w, arrow_h, BUTTON_NEUTRAL, ">", BLACK) {
-                return hudAction::DebugIndexIncrease;
+                return HudAction::DebugIndexIncrease;
             }
 
             let add_btn_w = col_w * 0.55;
@@ -563,7 +563,7 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
                 add_btn_w, arrow_h,
                 BUTTON_ACTION, "Add Fish", BLACK,
             ) {
-                return hudAction::TestAddFish(current_game_state.debugger.current_fish_debug_index);
+                return HudAction::TestAddFish(current_game_state.debugger.current_fish_debug_index);
             }
 
             // ---- Column 2: Water Stat Tuner ----
@@ -579,11 +579,11 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
             let row1_y = c2_inner_top + sh * 0.07;
             if util::ui_helper::draw_button_box(c2x + sw * 0.005, row1_y,
                 arrow_w, arrow_h, BUTTON_NEUTRAL, "<", BLACK) {
-                return hudAction::DebugShiftStatLeft;
+                return HudAction::DebugShiftStatLeft;
             }
             if util::ui_helper::draw_button_box(c2x + col_w - arrow_w - sw * 0.005, row1_y,
                 arrow_w, arrow_h, BUTTON_NEUTRAL, ">", BLACK) {
-                return hudAction::DebugShiftStatRight;
+                return HudAction::DebugShiftStatRight;
             }
             let change_w = col_w * 0.55;
             if util::ui_helper::draw_button_box(
@@ -591,7 +591,7 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
                 change_w, arrow_h,
                 BUTTON_ACTION, "Apply Change", BLACK,
             ) {
-                return hudAction::TestChangeStat(selected_param,
+                return HudAction::TestChangeStat(selected_param,
                     current_game_state.debugger.stat_change_direction);
             }
 
@@ -603,11 +603,11 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
 
             if util::ui_helper::draw_button_box(signs_start, row2_y,
                 signbtn_w, arrow_h, BUTTON_DANGER, "- Direction", BLACK) {
-                return hudAction::DebugShiftStatNegative;
+                return HudAction::DebugShiftStatNegative;
             }
             if util::ui_helper::draw_button_box(signs_start + signbtn_w + gap, row2_y,
                 signbtn_w, arrow_h, BUTTON_ACTION, "+ Direction", BLACK) {
-                return hudAction::DebugShiftStatPositive;
+                return HudAction::DebugShiftStatPositive;
             }
 
             // ---- Column 3: Misc ----
@@ -625,11 +625,11 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
 
             if util::ui_helper::draw_button_box(misc_x, misc_y1, misc_btn_w, misc_btn_h,
                 BUTTON_ACTION, "Add 1000 Prestige", BLACK) {
-                return hudAction::AddPrestige;
+                return HudAction::AddPrestige;
             }
             if util::ui_helper::draw_button_box(misc_x, misc_y2, misc_btn_w, misc_btn_h,
                 BUTTON_NEUTRAL, "Toggle Light", BLACK) {
-                return hudAction::TestToggleLight;
+                return HudAction::TestToggleLight;
             }
             util::ui_helper::draw_stat(c3x, misc_y3, col_w, sh * 0.03,
                 "(more debug tools soon)", BLACK);
@@ -655,5 +655,5 @@ pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active
         );
     }
 
-    hudAction::None
+    HudAction::None
 }

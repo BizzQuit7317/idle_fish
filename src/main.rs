@@ -118,12 +118,12 @@ async fn main() {
                 
                 if let Some(gs) = &mut game_state {
                     match screens::hud::draw_main_hud(gs, current_tab) {
-                        screens::hud::hudAction::FeedFish => {
+                        screens::hud::HudAction::FeedFish => {
                             for fish in &mut gs.tank.fish {
                                 fish.eat(gs.player.current_food_level);
                             }
                         },
-                        screens::hud::hudAction::AddFish(index) => {
+                        screens::hud::HudAction::AddFish(index) => {
                             if let Some(species) = gs.fish_registry.fish.get(index) {
                                 if gs.tank.fish.len() < gs.tank.max_fish as usize {
                                     if gs.economy.can_afford(gs.player.current_prestige, species) {
@@ -146,7 +146,7 @@ async fn main() {
                                 //tank_sprites.sync(gs.tank.fish.len());
                             }
                         },
-                        screens::hud::hudAction::TestAddFish(index) => {
+                        screens::hud::HudAction::TestAddFish(index) => {
                             //same as above except no cost
                             if let Some(species) = gs.fish_registry.fish.get(index) {
                                 if gs.tank.fish.len() < gs.tank.max_fish as usize {
@@ -163,7 +163,7 @@ async fn main() {
                                 //tank_sprites.sync(gs.tank.fish.len());
                             }
                         },
-                        screens::hud::hudAction::BuyFood => {
+                        screens::hud::HudAction::BuyFood => {
                             if gs.player.current_prestige > gs.economy.get_food_cost(gs.player.current_food_level) {
                                 gs.player.current_prestige -= gs.economy.get_food_cost(gs.player.current_food_level); //do this before upgrading the food level 
                                 gs.player.current_food_level += 1.0;
@@ -175,27 +175,27 @@ async fn main() {
                             }
                             
                         }
-                        screens::hud::hudAction::AddPrestige => {
+                        screens::hud::HudAction::AddPrestige => {
                             gs.player.current_prestige += 1000.0;
                         },
-                        screens::hud::hudAction::Save => {
+                        screens::hud::HudAction::Save => {
                             util::file_control::save_game_json(gs);
                             gs.player.last_save_time = SystemTime::now().duration_since(UNIX_EPOCH).expect("Time went backwards...").as_secs();
                         },
-                        screens::hud::hudAction::Settings => {
+                        screens::hud::HudAction::Settings => {
                             current_page = util::ui_helper::GamePage::Settings;
                         },
-                        screens::hud::hudAction::FishStats => {
+                        screens::hud::HudAction::FishStats => {
                             current_tab = &screens::hud::BottomTab::FishStats;
                         },
-                        screens::hud::hudAction::Store => {
+                        screens::hud::HudAction::Store => {
                             current_tab = &screens::hud::BottomTab::Store;
                         },
-                        screens::hud::hudAction::Testing => {
+                        screens::hud::HudAction::Testing => {
                             current_tab = &screens::hud::BottomTab::Testing;
                         },
                         
-                        screens::hud::hudAction::BuyTankCap => {
+                        screens::hud::HudAction::BuyTankCap => {
                             if gs.player.current_prestige > gs.economy.get_tank_cap_cost(gs.player.tank_cap_level) {
                                 gs.player.current_prestige -= gs.economy.get_tank_cap_cost(gs.player.tank_cap_level); //do this before upgrading the tank level
                                 gs.player.tank_cap_level += 1.0;
@@ -207,27 +207,27 @@ async fn main() {
                                 gs.notification.set("GET OUT OF HERE QUINTON!!!!.", 3.0);
                             }
                         },
-                        screens::hud::hudAction::DebugIndexIncrease => {
+                        screens::hud::HudAction::DebugIndexIncrease => {
                             let max = gs.fish_registry.fish.len() - 1;
                             gs.debugger.current_fish_debug_index = (gs.debugger.current_fish_debug_index + 1).min(max);
                         },
-                        screens::hud::hudAction::DebugIndexDecrease => {
+                        screens::hud::HudAction::DebugIndexDecrease => {
                             if gs.debugger.current_fish_debug_index > 0 {
                                 gs.debugger.current_fish_debug_index -= 1;
                             }
                         },
-                        screens::hud::hudAction::StoreScrollUp => {
+                        screens::hud::HudAction::StoreScrollUp => {
                             if gs.debugger.store_scroll_offset > 0 {
                                 gs.debugger.store_scroll_offset -= 1;
                             }
                         },
-                        screens::hud::hudAction::StoreScrollDown => {
+                        screens::hud::HudAction::StoreScrollDown => {
                             let max_scroll = (gs.fish_registry.fish.len() / 3).saturating_sub(1);
                             if gs.debugger.store_scroll_offset < max_scroll {
                                 gs.debugger.store_scroll_offset += 1;
                             }
                         },
-                        screens::hud::hudAction::ChangeWater => {
+                        screens::hud::HudAction::ChangeWater => {
                             if gs.tank.can_change_water() {
                                 gs.tank.water_change(gs.player.water_change_percent, gs.player.water_change_cooldown);
                                 gs.notification.set("Water change complete!", 2.0);
@@ -235,46 +235,46 @@ async fn main() {
                                 gs.notification.set(&format!("Water change on cooldown {} seconds", gs.player.water_change_cooldown), 2.0);
                             }
                         },
-                        screens::hud::hudAction::TestChangeStat(stat, direction) => {
+                        screens::hud::HudAction::TestChangeStat(stat, direction) => {
                             if direction {
                                 match stat {
-                                    tank::tank::WaterParameter::temprature => {gs.tank.water_parameters.temprature += 1.0},
-                                    tank::tank::WaterParameter::ph => {gs.tank.water_parameters.ph += 1.0;},
-                                    tank::tank::WaterParameter::gh => {gs.tank.water_parameters.gh += 1.0;},
-                                    tank::tank::WaterParameter::nitrate => {gs.tank.water_parameters.nitrate += 1.0;},
-                                    tank::tank::WaterParameter::nitrite => {gs.tank.water_parameters.nitrite += 1.0;},
-                                    tank::tank::WaterParameter::ammonia => {gs.tank.water_parameters.ammonia += 1.0;},
+                                    tank::tank::WaterParameter::Temprature => {gs.tank.water_parameters.temprature += 1.0},
+                                    tank::tank::WaterParameter::Ph => {gs.tank.water_parameters.ph += 1.0;},
+                                    tank::tank::WaterParameter::Gh => {gs.tank.water_parameters.gh += 1.0;},
+                                    tank::tank::WaterParameter::Nitrate => {gs.tank.water_parameters.nitrate += 1.0;},
+                                    tank::tank::WaterParameter::Nitrite => {gs.tank.water_parameters.nitrite += 1.0;},
+                                    tank::tank::WaterParameter::Ammonia => {gs.tank.water_parameters.ammonia += 1.0;},
                                 }
                             } else {
                                 match stat {
-                                    tank::tank::WaterParameter::temprature => {gs.tank.water_parameters.temprature -= 1.0;},
-                                    tank::tank::WaterParameter::ph => {gs.tank.water_parameters.ph -= 1.0;},
-                                    tank::tank::WaterParameter::gh => {gs.tank.water_parameters.gh -= 1.0;},
-                                    tank::tank::WaterParameter::nitrate => {gs.tank.water_parameters.nitrate -= 1.0;},
-                                    tank::tank::WaterParameter::nitrite => {gs.tank.water_parameters.nitrite -= 1.0;},
-                                    tank::tank::WaterParameter::ammonia => {gs.tank.water_parameters.ammonia -= 1.0;},
+                                    tank::tank::WaterParameter::Temprature => {gs.tank.water_parameters.temprature -= 1.0;},
+                                    tank::tank::WaterParameter::Ph => {gs.tank.water_parameters.ph -= 1.0;},
+                                    tank::tank::WaterParameter::Gh => {gs.tank.water_parameters.gh -= 1.0;},
+                                    tank::tank::WaterParameter::Nitrate => {gs.tank.water_parameters.nitrate -= 1.0;},
+                                    tank::tank::WaterParameter::Nitrite => {gs.tank.water_parameters.nitrite -= 1.0;},
+                                    tank::tank::WaterParameter::Ammonia => {gs.tank.water_parameters.ammonia -= 1.0;},
                                 }
                             }
                             
                         },
-                        screens::hud::hudAction::DebugShiftStatLeft => {
+                        screens::hud::HudAction::DebugShiftStatLeft => {
                             if gs.debugger.current_stat_debug_index == 0 {
                                 gs.debugger.current_stat_debug_index = tank::tank::WaterParameter::ALL.len() - 1;
                             } else {
                                 gs.debugger.current_stat_debug_index -= 1;
                             }
                         },
-                        screens::hud::hudAction::DebugShiftStatRight => {
+                        screens::hud::HudAction::DebugShiftStatRight => {
                             gs.debugger.current_stat_debug_index = 
                                 (gs.debugger.current_stat_debug_index + 1) % tank::tank::WaterParameter::ALL.len();
                         },
-                        screens::hud::hudAction::DebugShiftStatPositive => {
+                        screens::hud::HudAction::DebugShiftStatPositive => {
                             gs.debugger.stat_change_direction = true;
                         },
-                        screens::hud::hudAction::DebugShiftStatNegative => {
+                        screens::hud::HudAction::DebugShiftStatNegative => {
                             gs.debugger.stat_change_direction = false;
                         },
-                        screens::hud::hudAction::TestToggleLight => {
+                        screens::hud::HudAction::TestToggleLight => {
                             //Only need to count a toggle when the witch is turned on
                             if gs.tank.lighting.can_turn_on() {
                                 gs.tank.lighting.cooldown = gs.tank.lighting.on_period;
@@ -284,7 +284,7 @@ async fn main() {
                                gs.notification.set("Run out of switch toggles", 3.0) 
                             }
                         },
-                        screens::hud::hudAction::None => {}
+                        screens::hud::HudAction::None => {}
                     }
 
                     tank_sprites.sync(gs.tank.fish.len());
@@ -299,19 +299,19 @@ async fn main() {
                 clear_background(BLUE);
 
                 match screens::settings::draw_settings_menu(&last_page, &mut setting_state, current_settings_tab, game_state.as_ref()) {
-                    screens::settings::settingChoice::MainMenu => {
+                    screens::settings::SettingsChoice::MainMenu => {
                         current_page = util::ui_helper::GamePage::MainMenu;
                     },
-                    screens::settings::settingChoice::GameMenu => {
+                    screens::settings::SettingsChoice::GameMenu => {
                         current_page = util::ui_helper::GamePage::Game;
                     },
-                    screens::settings::settingChoice::Game => {
+                    screens::settings::SettingsChoice::Game => {
                         current_settings_tab = &screens::settings::SettingTab::Game;
                     },
-                    screens::settings::settingChoice::PlayerStats => {
+                    screens::settings::SettingsChoice::PlayerStats => {
                         current_settings_tab = &screens::settings::SettingTab::PlayerStats;
                     }, 
-                    screens::settings::settingChoice::None => {},
+                    screens::settings::SettingsChoice::None => {},
                 }
             }
         }

@@ -9,34 +9,34 @@ use crate::components;
 
 #[derive(Debug, Serialize, Deserialize, Clone, Copy)]
 pub enum WaterParameter {
-    temprature,
-    ph,
-    gh,
-    nitrate,
-    nitrite,
-    ammonia,
+    Temprature,
+    Ph,
+    Gh,
+    Nitrate,
+    Nitrite,
+    Ammonia,
 }
 
 impl WaterParameter {
     pub const ALL: [WaterParameter; 6] = [
-        WaterParameter::temprature,
-        WaterParameter::ph,
-        WaterParameter::gh,
-        WaterParameter::nitrate,
-        WaterParameter::nitrite,
-        WaterParameter::ammonia,
+        WaterParameter::Temprature,
+        WaterParameter::Ph,
+        WaterParameter::Gh,
+        WaterParameter::Nitrate,
+        WaterParameter::Nitrite,
+        WaterParameter::Ammonia,
     ];
 }
 
 impl WaterParameter {
     pub fn from_str(s: &str) -> WaterParameter {
         match s {
-            "temperature" => WaterParameter::temprature,
-            "ph" => WaterParameter::ph,
-            "gh" => WaterParameter::gh,
-            "nitrate" => WaterParameter::nitrate,
-            "nitrite" => WaterParameter::nitrite,
-            "ammonia" => WaterParameter::ammonia,
+            "temperature" => WaterParameter::Temprature,
+            "ph" => WaterParameter::Ph,
+            "gh" => WaterParameter::Gh,
+            "nitrate" => WaterParameter::Nitrate,
+            "nitrite" => WaterParameter::Nitrite,
+            "ammonia" => WaterParameter::Ammonia,
             _ => panic!("Unknown water parameter: {}", s), // panic here is fine, means your json is wrong
         }
     }
@@ -69,12 +69,12 @@ impl WaterParameters {
 
     pub fn apply_changes(&mut self, parameter: &WaterParameter, value: f64) {
         match parameter {
-            WaterParameter::temprature => self.temprature += value,
-            WaterParameter::ph => self.ph += value,
-            WaterParameter::gh => self.gh += value,
-            WaterParameter::nitrate => self.nitrate += value,
-            WaterParameter::nitrite => self.nitrite += value,
-            WaterParameter::ammonia => self.ammonia += value,
+            WaterParameter::Temprature => self.temprature += value,
+            WaterParameter::Ph => self.ph += value,
+            WaterParameter::Gh => self.gh += value,
+            WaterParameter::Nitrate => self.nitrate += value,
+            WaterParameter::Nitrite => self.nitrite += value,
+            WaterParameter::Ammonia => self.ammonia += value,
         }
     }
 }

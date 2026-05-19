@@ -3,7 +3,7 @@ use crate::util;
 use crate::game_data;
 use crate::systems;
 
-pub enum settingChoice {
+pub enum SettingsChoice {
     MainMenu,
     GameMenu,
     Game,
@@ -43,7 +43,7 @@ pub fn draw_settings_menu(
     state: &mut SettingsState,
     active_tab: &SettingTab,
     current_game_state: Option<&systems::game_state::GameState>,
-) -> settingChoice {
+) -> SettingsChoice {
     let sw = screen_width();
     let sh = screen_height();
 
@@ -61,8 +61,8 @@ pub fn draw_settings_menu(
     // Back button (left) — routes based on what page sent us here
     if util::ui_helper::draw_button_box(sw * 0.015, tb_btn_y, tb_btn_w, tb_btn_h, BUTTON_NEUTRAL, "Back", BLACK) {
         match last_page {
-            &util::ui_helper::GamePage::MainMenu => return settingChoice::MainMenu,
-            &util::ui_helper::GamePage::Game     => return settingChoice::GameMenu,
+            &util::ui_helper::GamePage::MainMenu => return SettingsChoice::MainMenu,
+            &util::ui_helper::GamePage::Game     => return SettingsChoice::GameMenu,
             &util::ui_helper::GamePage::Settings => {} // nowhere to go back to
         }
     }
@@ -106,8 +106,8 @@ pub fn draw_settings_menu(
         let (bg, fg) = if is_active { (TAB_ACTIVE, WHITE) } else { (TAB_INACTIVE, BLACK) };
         if util::ui_helper::draw_button_box(tx, tab_y, tab_w, tab_h, bg, label, fg) {
             return match tab {
-                SettingTab::Game        => settingChoice::Game,
-                SettingTab::PlayerStats => settingChoice::PlayerStats,
+                SettingTab::Game        => SettingsChoice::Game,
+                SettingTab::PlayerStats => SettingsChoice::PlayerStats,
             };
         }
     }
@@ -348,5 +348,5 @@ pub fn draw_settings_menu(
         },
     }
 
-    settingChoice::None
+    SettingsChoice::None
 }
