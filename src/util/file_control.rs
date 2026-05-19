@@ -3,8 +3,8 @@ use serde_json;
 use crate::systems;
 use crate::game_data;
 
-pub fn save_game_json(gameState: &systems::game_state::GameState) {
-    let json = serde_json::to_string(gameState).unwrap();
+pub fn save_game_json(current_game_state: &systems::game_state::GameState) {
+    let json = serde_json::to_string(current_game_state).unwrap();
     std::fs::write("saves/save.json", json).unwrap();
 }
 

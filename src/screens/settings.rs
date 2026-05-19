@@ -1,7 +1,6 @@
 use macroquad::prelude::*;
 use crate::util;
 use crate::game_data;
-use crate::debug;
 use crate::systems;
 
 pub enum settingChoice {
@@ -43,7 +42,7 @@ pub fn draw_settings_menu(
     last_page: &util::ui_helper::GamePage,
     state: &mut SettingsState,
     active_tab: &SettingTab,
-    gameState: Option<&systems::game_state::GameState>,
+    current_game_state: Option<&systems::game_state::GameState>,
 ) -> settingChoice {
     let sw = screen_width();
     let sh = screen_height();
@@ -185,7 +184,7 @@ pub fn draw_settings_menu(
         },
 
         &SettingTab::PlayerStats => {
-            if let Some(gs) = gameState {
+            if let Some(gs) = current_game_state {
                 let p = &gs.player;
 
                 // ---- Build sectioned content ----

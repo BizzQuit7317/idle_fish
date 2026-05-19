@@ -62,7 +62,7 @@ fn parameter_colour(value: f64, min: f64, max: f64) -> Color {
     }
 }
 
-pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &BottomTab) -> hudAction {
+pub fn draw_main_hud(current_game_state: &systems::game_state::GameState, active_tab: &BottomTab) -> hudAction {
     let sw = screen_width();
     let sh = screen_height();
 
@@ -92,7 +92,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
     x_cursor += tb_btn_w + sw * 0.01;
 
     if util::ui_helper::draw_button_box(x_cursor, tb_btn_y, tb_btn_w * 1.2, tb_btn_h, BUTTON_DANGER,
-        &format!("Water Change {}%", &gameState.player.water_change_percent), BLACK) {
+        &format!("Water Change {}%", &current_game_state.player.water_change_percent), BLACK) {
         return hudAction::ChangeWater;
     }
 
@@ -107,7 +107,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
 
     // Food button (right-of-center, before settings)
     if util::ui_helper::draw_button_box(rx_cursor, tb_btn_y, tb_btn_w, tb_btn_h, BUTTON_ACTION,
-        &format!("Food lvl {}", &gameState.player.current_food_level), BLACK) {
+        &format!("Food lvl {}", &current_game_state.player.current_food_level), BLACK) {
         return hudAction::FeedFish;
     }
 
@@ -121,7 +121,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
         prestige_cx, prestige_cy,
         prestige_w, prestige_h,
         HEADER_STRIP,
-        &format!("Prestige: {:.2}", gameState.player.current_prestige),
+        &format!("Prestige: {:.2}", current_game_state.player.current_prestige),
         WHITE,
     );
 
@@ -131,7 +131,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
     let rank_x = prestige_cx - prestige_w * 0.5 - rank_w - sw * 0.01;
     let rank_y = top_bar_y + (top_bar_h - rank_h) * 0.5;
     util::ui_helper::draw_text_box(rank_x, rank_y, rank_w, rank_h, BUTTON_NEUTRAL,
-        &format!("Rank: {}", gameState.player.rank), BLACK);
+        &format!("Rank: {}", current_game_state.player.rank), BLACK);
 
     // =====================================================================
     // SIDE PANEL — Tank Status (left of tank)
@@ -168,55 +168,55 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
     let stats: [(String, Color); 7] = [
         (
             format!("Tank occupancy: {} ({})",
-                gameState.player.current_fish_owned, gameState.tank.max_fish),
+                current_game_state.player.current_fish_owned, current_game_state.tank.max_fish),
             BLACK,
         ),
         (
-            format!("Tank Temp: {:.1}°C", gameState.tank.water_parameters.temprature),
+            format!("Tank Temp: {:.1}°C", current_game_state.tank.water_parameters.temprature),
             parameter_colour(
-                gameState.tank.water_parameters.temprature,
-                gameState.tank.ideal_parameters.temprature_range.min,
-                gameState.tank.ideal_parameters.temprature_range.max,
+                current_game_state.tank.water_parameters.temprature,
+                current_game_state.tank.ideal_parameters.temprature_range.min,
+                current_game_state.tank.ideal_parameters.temprature_range.max,
             ),
         ),
         (
-            format!("Tank PH: {:.1}pH", gameState.tank.water_parameters.ph),
+            format!("Tank PH: {:.1}pH", current_game_state.tank.water_parameters.ph),
             parameter_colour(
-                gameState.tank.water_parameters.ph,
-                gameState.tank.ideal_parameters.ph_range.min,
-                gameState.tank.ideal_parameters.ph_range.max,
+                current_game_state.tank.water_parameters.ph,
+                current_game_state.tank.ideal_parameters.ph_range.min,
+                current_game_state.tank.ideal_parameters.ph_range.max,
             ),
         ),
         (
-            format!("Tank GH: {:.1}°dGH", gameState.tank.water_parameters.gh),
+            format!("Tank GH: {:.1}°dGH", current_game_state.tank.water_parameters.gh),
             parameter_colour(
-                gameState.tank.water_parameters.gh,
-                gameState.tank.ideal_parameters.gh_range.min,
-                gameState.tank.ideal_parameters.gh_range.max,
+                current_game_state.tank.water_parameters.gh,
+                current_game_state.tank.ideal_parameters.gh_range.min,
+                current_game_state.tank.ideal_parameters.gh_range.max,
             ),
         ),
         (
-            format!("Tank Ammonia: {:.1}ppm", gameState.tank.water_parameters.ammonia),
+            format!("Tank Ammonia: {:.1}ppm", current_game_state.tank.water_parameters.ammonia),
             parameter_colour(
-                gameState.tank.water_parameters.ammonia,
-                gameState.tank.ideal_parameters.ammonia_range.min,
-                gameState.tank.ideal_parameters.ammonia_range.max,
+                current_game_state.tank.water_parameters.ammonia,
+                current_game_state.tank.ideal_parameters.ammonia_range.min,
+                current_game_state.tank.ideal_parameters.ammonia_range.max,
             ),
         ),
         (
-            format!("Tank Nitrite: {:.1}ppm", gameState.tank.water_parameters.nitrite),
+            format!("Tank Nitrite: {:.1}ppm", current_game_state.tank.water_parameters.nitrite),
             parameter_colour(
-                gameState.tank.water_parameters.nitrite,
-                gameState.tank.ideal_parameters.nitrite_range.min,
-                gameState.tank.ideal_parameters.nitrite_range.max,
+                current_game_state.tank.water_parameters.nitrite,
+                current_game_state.tank.ideal_parameters.nitrite_range.min,
+                current_game_state.tank.ideal_parameters.nitrite_range.max,
             ),
         ),
         (
-            format!("Tank Nitrate: {:.1}ppm", gameState.tank.water_parameters.nitrate),
+            format!("Tank Nitrate: {:.1}ppm", current_game_state.tank.water_parameters.nitrate),
             parameter_colour(
-                gameState.tank.water_parameters.nitrate,
-                gameState.tank.ideal_parameters.nitrate_range.min,
-                gameState.tank.ideal_parameters.nitrate_range.max,
+                current_game_state.tank.water_parameters.nitrate,
+                current_game_state.tank.ideal_parameters.nitrate_range.min,
+                current_game_state.tank.ideal_parameters.nitrate_range.max,
             ),
         ),
     ];
@@ -239,7 +239,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
     //Add Algea bloom visual
     
     //Add shadow for when light are off
-    if !gameState.tank.lighting.on {
+    if !current_game_state.tank.lighting.on {
         util::ui_helper::draw_button_box(sw * 0.25, sh * 0.125, sw * game_data::constants::TANK_WIDTH, sh * game_data::constants::TANK_HEIGHT,
             Color::from_rgba(0, 0, 0, 50), "", BLACK);
     }
@@ -298,7 +298,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
     match active_tab {
         &BottomTab::FishStats => {
             // Fish columns with a header strip on each card
-            let fish_count = gameState.tank.fish.len();
+            let fish_count = current_game_state.tank.fish.len();
             if fish_count == 0 {
                 util::ui_helper::draw_stat(0.0, content_top + sh * 0.05, sw, sh * 0.04,
                     "No fish in the tank yet.", BLACK);
@@ -311,7 +311,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
                 let card_header_h = sh * 0.035;
                 let row_inner_h = sh * 0.033;
 
-                for (i, fish) in gameState.tank.fish.iter().enumerate() {
+                for (i, fish) in current_game_state.tank.fish.iter().enumerate() {
                     let cx = content_pad + i as f32 * (col_w + col_gap);
 
                     // Card background
@@ -376,8 +376,8 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
                 content_top + sh * 0.002 + sec_header_h * 0.5 + shs.height * 0.5,
                 shf, WHITE);
 
-            let scroll = gameState.debugger.store_scroll_offset;
-            let fish_list = &gameState.fish_registry.fish;
+            let scroll = current_game_state.debugger.store_scroll_offset;
+            let fish_list = &current_game_state.fish_registry.fish;
             let total_fish = fish_list.len();
 
             // Scroll buttons stacked on the right edge of the store left section
@@ -425,7 +425,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
                     y + mh * 0.5 + mt.height * 0.5, mf, WHITE);
 
                 util::ui_helper::draw_stat(x, y + mh + sh * 0.005, adj_card_w, sh * 0.025,
-                    &format!("Cost: {:.0}", gameState.economy.get_cost(species)), BLACK);
+                    &format!("Cost: {:.0}", current_game_state.economy.get_cost(species)), BLACK);
                 util::ui_helper::draw_stat(x, y + mh + sh * 0.030, adj_card_w, sh * 0.025,
                     &format!("Mod: {:?}", species.modifiers[0]), BLACK);
 
@@ -470,7 +470,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
             util::ui_helper::draw_stat(up_left, tile_y + sh * 0.015, tile_w, sh * 0.035,
                 "Upgrade Food", BLACK);
             util::ui_helper::draw_stat(up_left, tile_y + sh * 0.055, tile_w, sh * 0.03,
-                &format!("Level: {}", gameState.player.current_food_level), BLACK);
+                &format!("Level: {}", current_game_state.player.current_food_level), BLACK);
             let food_btn_w = tile_w * 0.7;
             let food_btn_h = sh * 0.05;
             if util::ui_helper::draw_button_box(
@@ -479,7 +479,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
                 food_btn_w, food_btn_h,
                 BUTTON_ACTION,
                 &format!("Buy: {:.2}",
-                    gameState.economy.get_food_cost(gameState.player.current_food_level)),
+                    current_game_state.economy.get_food_cost(current_game_state.player.current_food_level)),
                 BLACK,
             ) {
                 return hudAction::BuyFood;
@@ -493,7 +493,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
             util::ui_helper::draw_stat(cap_x, tile_y + sh * 0.015, tile_w, sh * 0.035,
                 "Upgrade Tank Cap", BLACK);
             util::ui_helper::draw_stat(cap_x, tile_y + sh * 0.055, tile_w, sh * 0.03,
-                &format!("Level: {}", gameState.player.tank_cap_level), BLACK);
+                &format!("Level: {}", current_game_state.player.tank_cap_level), BLACK);
             let cap_btn_w = tile_w * 0.7;
             if util::ui_helper::draw_button_box(
                 cap_x + (tile_w - cap_btn_w) * 0.5,
@@ -501,7 +501,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
                 cap_btn_w, food_btn_h,
                 BUTTON_ACTION,
                 &format!("Buy: {:.2}",
-                    gameState.economy.get_tank_cap_cost(gameState.player.tank_cap_level)),
+                    current_game_state.economy.get_tank_cap_cost(current_game_state.player.tank_cap_level)),
                 BLACK,
             ) {
                 return hudAction::BuyTankCap;
@@ -509,8 +509,8 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
         },
 
         &BottomTab::Testing => {
-            let selected = &gameState.fish_registry.fish[gameState.debugger.current_fish_debug_index];
-            let selected_param = tank::tank::WaterParameter::ALL[gameState.debugger.current_stat_debug_index];
+            let selected = &current_game_state.fish_registry.fish[current_game_state.debugger.current_fish_debug_index];
+            let selected_param = tank::tank::WaterParameter::ALL[current_game_state.debugger.current_stat_debug_index];
 
             // Three logical clusters in equal columns
             let col_count = 3;
@@ -563,7 +563,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
                 add_btn_w, arrow_h,
                 BUTTON_ACTION, "Add Fish", BLACK,
             ) {
-                return hudAction::TestAddFish(gameState.debugger.current_fish_debug_index);
+                return hudAction::TestAddFish(current_game_state.debugger.current_fish_debug_index);
             }
 
             // ---- Column 2: Water Stat Tuner ----
@@ -573,7 +573,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
                 &format!("Param: {:?}", selected_param), BLACK);
             util::ui_helper::draw_stat(c2x, c2_inner_top + sh * 0.030, col_w, sh * 0.030,
                 &format!("Dir: {}",
-                    if gameState.debugger.stat_change_direction { "+" } else { "-" }),
+                    if current_game_state.debugger.stat_change_direction { "+" } else { "-" }),
                 BLACK);
 
             let row1_y = c2_inner_top + sh * 0.07;
@@ -592,7 +592,7 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
                 BUTTON_ACTION, "Apply Change", BLACK,
             ) {
                 return hudAction::TestChangeStat(selected_param,
-                    gameState.debugger.stat_change_direction);
+                    current_game_state.debugger.stat_change_direction);
             }
 
             let row2_y = row1_y + arrow_h + sh * 0.01;
@@ -645,12 +645,12 @@ pub fn draw_main_hud(gameState: &systems::game_state::GameState, active_tab: &Bo
     // =====================================================================
     // NOTIFICATION POPUP (unchanged behavior, slightly nicer placement)
     // =====================================================================
-    if gameState.notification.is_active() {
+    if current_game_state.notification.is_active() {
         util::ui_helper::draw_centered_text_box(
             sw * 0.5, sh * 0.55,
             sw * 0.3, sh * 0.05,
             Color::from_rgba(0, 0, 0, 180),
-            &gameState.notification.message,
+            &current_game_state.notification.message,
             WHITE,
         );
     }
