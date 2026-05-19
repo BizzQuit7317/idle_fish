@@ -158,10 +158,16 @@ async fn main() {
                             }
                         },
                         screens::hud::hudAction::BuyFood => {
-                            gs.player.current_food_level += 1.0;
-                            if gs.player.current_food_level > gs.player.highest_food_level {
-                                gs.player.highest_food_level = gs.player.current_food_level; //update the highesst food level reached
+                            if gs.player.current_prestige > gs.economy.get_food_cost(gs.player.current_food_level) {
+                                gs.player.current_prestige -= gs.economy.get_food_cost(gs.player.current_food_level); //do this before upgrading the food level 
+                                gs.player.current_food_level += 1.0;
+                                if gs.player.current_food_level > gs.player.highest_food_level {
+                                    gs.player.highest_food_level = gs.player.current_food_level; //update the highesst food level reached
+                                }
+                            } else {
+                                gs.notification.set("Get your hands out of the cookie jar scum.", 3.0);
                             }
+                            
                         }
                         screens::hud::hudAction::AddPrestige => {
                             gs.player.current_prestige += 1000.0;
@@ -184,11 +190,16 @@ async fn main() {
                         },
                         
                         screens::hud::hudAction::BuyTankCap => {
-                            gs.player.tank_cap_level += 1.0;
-                            if gs.player.tank_cap_level > gs.player.highest_tank_cap_level {
-                                gs.player.highest_tank_cap_level = gs.player.tank_cap_level;
+                            if gs.player.current_prestige > gs.economy.get_tank_cap_cost(gs.player.tank_cap_level) {
+                                gs.player.current_prestige -= gs.economy.get_tank_cap_cost(gs.player.tank_cap_level); //do this before upgrading the tank level
+                                gs.player.tank_cap_level += 1.0;
+                                if gs.player.tank_cap_level > gs.player.highest_tank_cap_level {
+                                    gs.player.highest_tank_cap_level = gs.player.tank_cap_level;
+                                }
+                                gs.tank.max_fish += 1;
+                            } else {
+                                gs.notification.set("GET OUT OF HERE QUINTON!!!!.", 3.0);
                             }
-                            gs.tank.max_fish += 1;
                         },
                         screens::hud::hudAction::DebugIndexIncrease => {
                             let max = gs.fish_registry.fish.len() - 1;
